@@ -1,0 +1,38 @@
+package config
+
+type Config struct {
+	ServerConfig ServerConfig
+	JWTConfig    JWTConfig
+	DBConfig     DBConfig
+	Logger       Logger
+}
+
+type ServerConfig struct {
+	AppVersion       string
+	Mode             string
+	RoutePrefix      string
+	Debug            bool
+	Port             string
+	TimeoutSecs      int64
+	ReadTimeoutSecs  int64
+	WriteTimeoutSecs int64
+}
+
+type JWTConfig struct {
+	SessionTime int
+	SecretKey   string
+}
+
+type DBConfig struct {
+	Host     string
+	Port     string
+	Username string
+	Name     string
+	Password string
+}
+
+type Logger struct {
+	Development bool
+	Encoding    string
+	Level       string
+}

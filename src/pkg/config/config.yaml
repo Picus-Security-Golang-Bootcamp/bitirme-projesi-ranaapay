@@ -1,0 +1,25 @@
+ServerConfig:
+  AppVersion: 1.0.0
+  Mode: Development
+  RoutePrefix: /api/v1/basket
+  Debug: false
+  Port: 8080
+  TimeoutSecs: 60
+  ReadTimeoutSecs: 60
+  WriteTimeoutSecs: 12
+
+JWTConfig:
+  SessionTime: 3600
+  SecretKey: dummySecretKey
+
+DBConfig:
+  Host: localhost
+  Port: 5432
+  Username: postgres
+  Name: picus_basket
+  Password: postgres
+
+Logger:
+  Development: true
+  Encoding: json
+  Level: info
