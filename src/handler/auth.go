@@ -2,6 +2,7 @@ package handler
 
 import (
 	"PicusFinalCase/src/handler/requestType"
+	"PicusFinalCase/src/handler/responseType"
 	"PicusFinalCase/src/service"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -34,7 +35,7 @@ func (h *AuthHandler) createUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
-	c.JSON(http.StatusCreated, token)
+	c.JSON(http.StatusCreated, responseType.NewResponseType(http.StatusCreated, token))
 	return
 }
 
@@ -53,6 +54,6 @@ func (h *AuthHandler) loginUser(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, err.Error())
 		return
 	}
-	c.JSON(http.StatusOK, token)
+	c.JSON(http.StatusOK, responseType.NewResponseType(http.StatusOK, token))
 	return
 }
