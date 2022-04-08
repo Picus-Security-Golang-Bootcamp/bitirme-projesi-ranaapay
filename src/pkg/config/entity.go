@@ -19,7 +19,7 @@ type ServerConfig struct {
 }
 
 type JWTConfig struct {
-	SessionTime int
+	SessionTime int64
 	SecretKey   string
 }
 
