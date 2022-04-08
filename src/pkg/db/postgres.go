@@ -1,8 +1,8 @@
 package db
 
 import (
+	"PicusFinalCase/src/pkg/config"
 	"fmt"
-	"github.com/ranaapay/bitirme-projesi-ranaapay/src/pkg/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
