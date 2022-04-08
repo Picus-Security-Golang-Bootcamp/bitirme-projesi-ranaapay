@@ -6,11 +6,11 @@ import (
 
 type User struct {
 	gorm.Model
-	FirstName string
-	LastName  string
-	Email     string
-	Password  string
-	Role      Role
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
+	Email     string `json:"email"`
+	Password  string `json:"password"`
+	Role      Role   `json:"role"`
 }
 
 func (User) TableName() string {
