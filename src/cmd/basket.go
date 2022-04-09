@@ -4,6 +4,7 @@ import (
 	"PicusFinalCase/src/handler"
 	"PicusFinalCase/src/pkg/config"
 	"PicusFinalCase/src/pkg/db"
+	"PicusFinalCase/src/pkg/middleware"
 	"PicusFinalCase/src/repository"
 	"PicusFinalCase/src/service"
 	"fmt"
@@ -37,8 +38,9 @@ func Execute() {
 		WriteTimeout: time.Duration(cfg.ServerConfig.WriteTimeoutSecs * int64(time.Second)),
 	}
 	rootRouter := r.Group(cfg.ServerConfig.RoutePrefix)
-	authenticationRouter := rootRouter.Group("/authentication")
+	rootRouter.Use(middleware.Recovery())
 
+	authenticationRouter := rootRouter.Group("/authentication")
 	authRepo := repository.NewAuthRepository(db)
 	autService := service.NewAuthService(cfg.JWTConfig, authRepo)
 	handler.NewAuthHandler(authenticationRouter, autService)

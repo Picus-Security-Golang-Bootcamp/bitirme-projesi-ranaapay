@@ -2,6 +2,7 @@ package repository
 
 import (
 	models "PicusFinalCase/src/models"
+	"PicusFinalCase/src/pkg/errorHandler"
 	"errors"
 	"gorm.io/gorm"
 )
@@ -17,28 +18,30 @@ func NewAuthRepository(db *gorm.DB) *AuthRepository {
 	return &authRepo
 }
 
-func (r *AuthRepository) CreateUser(user models.User) (*models.User, error) {
+func (r *AuthRepository) CreateUser(user models.User) *models.User {
 	result := r.db.Create(&user)
 	if result.Error != nil {
-		return nil, result.Error
+		errorHandler.Panic(errorHandler.DBCreateError)
 	}
-	return &user, nil
+	return &user
 }
 
-func (r *AuthRepository) CheckUserNamePassword(name string) (*models.User, error) {
+func (r *AuthRepository) FindUser(name string) *models.User {
 	var user models.User
 	result := r.db.Where(&models.User{FirstName: name}).First(&user)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		return nil, errors.New("UserNotFound")
+		errorHandler.Panic(errorHandler.NotFoundError)
 	}
 	if result.Error != nil {
-		return nil, result.Error
+		errorHandler.Panic(errorHandler.InternalServerError)
 	}
-	return &user, nil
+	return &user
 }
 
 func (r *AuthRepository) migrations() {
-	r.db.AutoMigrate(&models.User{})
+	if err := r.db.AutoMigrate(&models.User{}); err != nil {
+		errorHandler.Panic(errorHandler.DBMigrateError)
+	}
 }
 
 func (r *AuthRepository) insertSampleAdminData() {

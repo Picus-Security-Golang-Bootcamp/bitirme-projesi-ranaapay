@@ -2,7 +2,7 @@ package requestType
 
 import (
 	"PicusFinalCase/src/models"
-	"errors"
+	"PicusFinalCase/src/pkg/errorHandler"
 )
 
 type LoginType struct {
@@ -27,28 +27,26 @@ func (req UserRequestType) RequestToUserType() models.User {
 	}
 }
 
-func (req UserRequestType) ValidateUserRequest() error {
+func (req UserRequestType) ValidateUserRequest() {
 	if req.FirstName == "" {
-		return errors.New("FirstName is required, it can not be empty. ")
+		errorHandler.Panic(errorHandler.FirstNameValidationError)
 	}
 	if req.LastName == "" {
-		return errors.New("LastName is required, it can not be empty. ")
+		errorHandler.Panic(errorHandler.LastNameValidationError)
 	}
 	if req.Email == "" {
-		return errors.New("Email is required, it can not be empty. ")
+		errorHandler.Panic(errorHandler.EmailValidationError)
 	}
 	if req.Password == "" {
-		return errors.New("Password is required, it can not be empty. ")
+		errorHandler.Panic(errorHandler.PasswordValidationError)
 	}
-	return nil
 }
 
-func (req LoginType) ValidateLoginType() error {
+func (req LoginType) ValidateLoginType() {
 	if req.FirstName == "" {
-		return errors.New("FirstName is required, it can not be empty. ")
+		errorHandler.Panic(errorHandler.FirstNameValidationError)
 	}
 	if req.Password == "" {
-		return errors.New("Password is required, it can not be empty. ")
+		errorHandler.Panic(errorHandler.PasswordValidationError)
 	}
-	return nil
 }

@@ -3,6 +3,7 @@ package handler
 import (
 	"PicusFinalCase/src/handler/requestType"
 	"PicusFinalCase/src/handler/responseType"
+	"PicusFinalCase/src/pkg/errorHandler"
 	"PicusFinalCase/src/service"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -22,19 +23,11 @@ func NewAuthHandler(r *gin.RouterGroup, authService *service.AuthService) {
 func (h *AuthHandler) createUser(c *gin.Context) {
 	var userReq requestType.UserRequestType
 	if err := c.Bind(&userReq); err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
-		return
+		errorHandler.Panic(errorHandler.BindError)
 	}
-	if err := userReq.ValidateUserRequest(); err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
-		return
-	}
+	userReq.ValidateUserRequest()
 	user := userReq.RequestToUserType()
-	token, err := h.service.CreateUser(user)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
-		return
-	}
+	token := h.service.CreateUser(user)
 	c.JSON(http.StatusCreated, responseType.NewResponseType(http.StatusCreated, token))
 	return
 }
@@ -42,18 +35,10 @@ func (h *AuthHandler) createUser(c *gin.Context) {
 func (h *AuthHandler) loginUser(c *gin.Context) {
 	var userLogin requestType.LoginType
 	if err := c.Bind(&userLogin); err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
-		return
+		errorHandler.Panic(errorHandler.BindError)
 	}
-	if err := userLogin.ValidateLoginType(); err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
-		return
-	}
-	token, err := h.service.LoginUser(userLogin.FirstName, userLogin.Password)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, err.Error())
-		return
-	}
+	userLogin.ValidateLoginType()
+	token := h.service.LoginUser(userLogin.FirstName, userLogin.Password)
 	c.JSON(http.StatusOK, responseType.NewResponseType(http.StatusOK, token))
 	return
 }

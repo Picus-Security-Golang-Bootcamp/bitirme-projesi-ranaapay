@@ -1,6 +1,9 @@
 package models
 
-import "golang.org/x/crypto/bcrypt"
+import (
+	"PicusFinalCase/src/pkg/errorHandler"
+	"golang.org/x/crypto/bcrypt"
+)
 
 type User struct {
 	Base
@@ -23,10 +26,12 @@ const (
 	Customer
 )
 
-func (u *User) HashPassword() error {
+func (u *User) HashPassword() {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(u.Password), 14)
+	if err != nil {
+		errorHandler.Panic(errorHandler.HashPasswordError)
+	}
 	u.Password = string(bytes)
-	return err
 }
 
 func (u *User) CheckPasswordHash(password string) bool {

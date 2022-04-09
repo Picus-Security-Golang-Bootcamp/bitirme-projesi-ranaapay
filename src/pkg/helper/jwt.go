@@ -3,11 +3,11 @@ package helper
 import (
 	"PicusFinalCase/src/models"
 	"PicusFinalCase/src/pkg/config"
-	"fmt"
+	"PicusFinalCase/src/pkg/errorHandler"
 	"github.com/golang-jwt/jwt"
 )
 
-func GenerateJwtToken(user models.User, cfg config.JWTConfig) (string, error) {
+func GenerateJwtToken(user models.User, cfg config.JWTConfig) string {
 	secretKey := []byte(cfg.SecretKey)
 	claims := models.UserClaims{
 		StandardClaims: jwt.StandardClaims{
@@ -19,8 +19,7 @@ func GenerateJwtToken(user models.User, cfg config.JWTConfig) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString(secretKey)
 	if err != nil {
-		fmt.Println(secretKey)
-		return "", err
+		errorHandler.Panic(errorHandler.GenerateJwtError)
 	}
-	return tokenString, nil
+	return tokenString
 }

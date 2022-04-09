@@ -1,12 +1,11 @@
 package config
 
 import (
-	"errors"
+	"PicusFinalCase/src/pkg/errorHandler"
 	"github.com/spf13/viper"
-	"log"
 )
 
-func LoadConfig(filename string) (*Config, error) {
+func LoadConfig(filename string) (*Config, interface{}) {
 	v := viper.New()
 	v.SetConfigName(filename)
 	v.AddConfigPath(".")
@@ -14,15 +13,14 @@ func LoadConfig(filename string) (*Config, error) {
 	v.AutomaticEnv()
 	if err := v.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-			return nil, errors.New("config file not found")
+			return nil, errorHandler.ConfigNotFoundError
 		}
 		return nil, err
 	}
 	var c Config
 	err := v.Unmarshal(&c)
 	if err != nil {
-		log.Printf("unable to decode into struct, %v", err)
-		return nil, err
+		return nil, errorHandler.UnmarshalError
 	}
 	return &c, nil
 }
