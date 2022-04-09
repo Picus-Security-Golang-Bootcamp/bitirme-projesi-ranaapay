@@ -13,6 +13,7 @@ type AuthRepository struct {
 func NewAuthRepository(db *gorm.DB) *AuthRepository {
 	authRepo := AuthRepository{db: db}
 	authRepo.migrations()
+	authRepo.insertSampleAdminData()
 	return &authRepo
 }
 
@@ -38,4 +39,15 @@ func (r *AuthRepository) CheckUserNamePassword(name string) (*models.User, error
 
 func (r *AuthRepository) migrations() {
 	r.db.AutoMigrate(&models.User{})
+}
+
+func (r *AuthRepository) insertSampleAdminData() {
+	user := models.User{
+		FirstName: "admin",
+		LastName:  "admin",
+		Email:     "admin",
+		Password:  "12345",
+		Role:      0,
+	}
+	r.db.Create(&user)
 }
