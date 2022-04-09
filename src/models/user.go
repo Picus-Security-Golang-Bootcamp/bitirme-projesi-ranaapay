@@ -1,11 +1,9 @@
 package models
 
-import (
-	"gorm.io/gorm"
-)
+import "golang.org/x/crypto/bcrypt"
 
 type User struct {
-	gorm.Model
+	Base
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
 	Email     string `json:"email"`

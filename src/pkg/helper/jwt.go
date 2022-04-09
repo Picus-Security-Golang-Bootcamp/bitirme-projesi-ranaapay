@@ -13,7 +13,7 @@ func GenerateJwtToken(user models.User, cfg config.JWTConfig) (string, error) {
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: cfg.SessionTime,
 		},
-		UserId: user.ID,
+		UserId: user.Id,
 		Role:   user.Role,
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

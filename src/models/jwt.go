@@ -1,9 +1,11 @@
 package models
 
-import "github.com/golang-jwt/jwt"
+import (
+	"github.com/golang-jwt/jwt"
+)
 
 type UserClaims struct {
 	jwt.StandardClaims
-	UserId uint
+	UserId string
 	Role   Role
 }
