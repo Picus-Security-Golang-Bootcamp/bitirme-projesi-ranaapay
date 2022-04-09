@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"PicusFinalCase/src/models"
+	models "PicusFinalCase/src/models"
 	"errors"
 	"gorm.io/gorm"
 )
@@ -24,9 +24,9 @@ func (r *AuthRepository) CreateUser(user models.User) (*models.User, error) {
 	return &user, nil
 }
 
-func (r *AuthRepository) CheckUserNamePassword(name string, password string) (*models.User, error) {
+func (r *AuthRepository) CheckUserNamePassword(name string) (*models.User, error) {
 	var user models.User
-	result := r.db.Where(&models.User{FirstName: name, Password: password}).First(&user)
+	result := r.db.Where(&models.User{FirstName: name}).First(&user)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		return nil, errors.New("UserNotFound")
 	}

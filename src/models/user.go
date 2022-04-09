@@ -24,3 +24,14 @@ const (
 	Admin Role = iota
 	Customer
 )
+
+func (u *User) HashPassword() error {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(u.Password), 14)
+	u.Password = string(bytes)
+	return err
+}
+
+func (u *User) CheckPasswordHash(password string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password))
+	return err == nil
+}
