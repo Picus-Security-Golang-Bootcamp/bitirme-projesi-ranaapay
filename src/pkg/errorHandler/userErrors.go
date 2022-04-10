@@ -31,7 +31,7 @@ var (
 		Message: "Generate Jwt error.",
 	}
 	PasswordNotTrueError = _type.ErrorType{
-		Code:    http.StatusBadRequest,
+		Code:    http.StatusUnauthorized,
 		Message: "The password you entered is incorrect. Please enter valid password.",
 	}
 )

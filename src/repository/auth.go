@@ -30,7 +30,7 @@ func (r *AuthRepository) FindUser(name string) *models.User {
 	var user models.User
 	result := r.db.Where(&models.User{FirstName: name}).First(&user)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		errorHandler.Panic(errorHandler.NotFoundError)
+		errorHandler.Panic(errorHandler.FirstNameError)
 	}
 	if result.Error != nil {
 		errorHandler.Panic(errorHandler.InternalServerError)
@@ -52,5 +52,6 @@ func (r *AuthRepository) insertSampleAdminData() {
 		Password:  "12345",
 		Role:      0,
 	}
+	user.HashPassword()
 	r.db.Create(&user)
 }
