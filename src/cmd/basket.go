@@ -37,13 +37,19 @@ func Execute() {
 		ReadTimeout:  time.Duration(cfg.ServerConfig.ReadTimeoutSecs * int64(time.Second)),
 		WriteTimeout: time.Duration(cfg.ServerConfig.WriteTimeoutSecs * int64(time.Second)),
 	}
+
 	rootRouter := r.Group(cfg.ServerConfig.RoutePrefix)
 	rootRouter.Use(middleware.Recovery())
 
 	authenticationRouter := rootRouter.Group("/authentication")
 	authRepo := repository.NewAuthRepository(db)
-	autService := service.NewAuthService(cfg.JWTConfig, authRepo)
-	handler.NewAuthHandler(authenticationRouter, autService)
+	authService := service.NewAuthService(cfg.JWTConfig, authRepo)
+	handler.NewAuthHandler(authenticationRouter, authService)
+
+	categoryRouter := rootRouter.Group("/category")
+	categoryRepo := repository.NewCategoryRepository(db)
+	categoryService := service.NewCategoryService(categoryRepo)
+	handler.NewCategoryHandler(categoryRouter, cfg.JWTConfig, categoryService)
 
 	if err = srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		log.Fatalf("listen: %s\n", err)
