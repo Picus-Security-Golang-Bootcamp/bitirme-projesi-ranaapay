@@ -34,6 +34,14 @@ var (
 		Code:    http.StatusInternalServerError,
 		Message: "Config File Not Found Error",
 	}
+	CSVReadError = _type.ErrorType{
+		Code:    http.StatusInternalServerError,
+		Message: "CSV Read Error",
+	}
+	FormFileError = _type.ErrorType{
+		Code:    http.StatusInternalServerError,
+		Message: "Form File Error",
+	}
 	ConvertIdError = _type.ErrorType{
 		Code:    http.StatusBadRequest,
 		Message: "Id is not valid. Please write valid Id.",
