@@ -7,13 +7,17 @@ import (
 )
 
 type Base struct {
-	Id        string `gorm:"primarykey"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt time.Time `gorm:"index"`
+	Id        string    `gorm:"primarykey" json:"id"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
+	DeletedAt time.Time `gorm:"index" json:"deletedAt"`
+	IsDeleted bool      `json:"isDeleted"`
 }
 
 func (b *Base) BeforeCreate(tx *gorm.DB) (err error) {
 	b.Id = uuid.New().String()
+	b.CreatedAt = time.Now()
+	b.UpdatedAt = time.Now()
+	b.IsDeleted = false
 	return
 }
