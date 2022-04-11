@@ -24,6 +24,7 @@ func NewProductHandler(r *gin.RouterGroup, config config.JWTConfig, productServi
 	r.POST("", h.createProducts)
 	r.DELETE("/:id", h.deleteProducts)
 	r.GET("", h.listProducts)
+	r.PUT("/:id", h.updateProducts)
 }
 
 func (h ProductHandler) listProducts(c *gin.Context) {
@@ -63,5 +64,31 @@ func (h *ProductHandler) deleteProducts(c *gin.Context) {
 	id := c.Param("id")
 	h.productService.DeleteProduct(id)
 	c.JSON(http.StatusOK, responseType.NewResponseType(http.StatusOK, true))
+	return
+}
+
+func (h *ProductHandler) updateProducts(c *gin.Context) {
+	/*userRole, ok := c.Get("role")
+	if !ok {
+		errorHandler.Panic(errorHandler.NotAuthorizedError)
+	}
+	if userRole != models.Admin {
+		errorHandler.Panic(errorHandler.ForbiddenError)
+	}*/
+	reqId := c.Param("id")
+	var reqProduct requestType.ProductRequestType
+	if err := c.Bind(&reqProduct); err != nil {
+		errorHandler.Panic(errorHandler.BindError)
+	}
+	reqProduct.ValidateProductRequest()
+	category := h.categoryService.FindCategory(reqProduct.CategoryId)
+	if category == nil {
+		errorHandler.Panic(errorHandler.CategoryIdNotValidError)
+	}
+	product := reqProduct.RequestToProductType()
+	product.SetProductId(reqId)
+	res := h.productService.UpdateProduct(product)
+	productRes := responseType.NewProductResponseType(res)
+	c.JSON(http.StatusOK, responseType.NewResponseType(http.StatusOK, productRes))
 	return
 }

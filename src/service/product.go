@@ -3,6 +3,7 @@ package service
 import (
 	"PicusFinalCase/src/models"
 	"PicusFinalCase/src/pkg/errorHandler"
+	"PicusFinalCase/src/pkg/helper"
 	"PicusFinalCase/src/repository"
 )
 
@@ -37,4 +38,17 @@ func (s *ProductService) FindProducts(searchFilter map[string]interface{}, sortO
 		errorHandler.Panic(errorHandler.NotFoundError)
 	}
 	return total, res
+}
+
+func (s *ProductService) UpdateProduct(product models.Product) models.Product {
+	updateOptions := helper.SetProductUpdateOptions(product)
+	product.SetProductUpdatedAt()
+	updatedProduct, err := s.repo.UpdateProduct(product, updateOptions)
+	if err != nil {
+		errorHandler.Panic(errorHandler.InternalServerError)
+	}
+	if updatedProduct == nil {
+		errorHandler.Panic(errorHandler.NotFoundError)
+	}
+	return *updatedProduct
 }
