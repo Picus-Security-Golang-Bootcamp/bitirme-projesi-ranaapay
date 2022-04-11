@@ -5,6 +5,7 @@ import (
 	"PicusFinalCase/src/handler/responseType"
 	"PicusFinalCase/src/pkg/config"
 	"PicusFinalCase/src/pkg/errorHandler"
+	"PicusFinalCase/src/pkg/helper"
 	"PicusFinalCase/src/service"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -22,6 +23,16 @@ func NewProductHandler(r *gin.RouterGroup, config config.JWTConfig, productServi
 	}
 	r.POST("", h.createProducts)
 	r.DELETE("/:id", h.deleteProducts)
+	r.GET("", h.listProducts)
+}
+
+func (h ProductHandler) listProducts(c *gin.Context) {
+	reqQueries := c.Request.URL.Query()
+	sortOpt, pageNum, pageSize := helper.SetPaginationOptions(&reqQueries)
+	searchFilter := helper.SetSearchFilter(reqQueries)
+	total, res := h.productService.FindProducts(searchFilter, sortOpt, pageNum, pageSize)
+	productsRes := responseType.NewProductsResponseType(res)
+	c.JSON(http.StatusOK, responseType.NewPaginationType(pageNum, pageSize, total, productsRes))
 }
 
 func (h *ProductHandler) createProducts(c *gin.Context) {
