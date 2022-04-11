@@ -29,3 +29,12 @@ func (s *ProductService) DeleteProduct(id string) {
 		errorHandler.Panic(errorHandler.NotFoundError)
 	}
 }
+
+func (s *ProductService) FindProducts(searchFilter map[string]interface{}, sortOpt string, pageNum int, pageSize int) (int, []models.Product) {
+	offset := (pageNum - 1) * pageSize
+	total, res := s.repo.FindProducts(searchFilter, sortOpt, offset, pageSize)
+	if len(res) == 0 {
+		errorHandler.Panic(errorHandler.NotFoundError)
+	}
+	return total, res
+}

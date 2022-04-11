@@ -46,3 +46,31 @@ func (r *ProductRepository) migrations() {
 		errorHandler.Panic(errorHandler.DBMigrateError)
 	}
 }
+
+func (r *ProductRepository) FindProducts(searchFilter map[string]interface{}, sortOpt string, offset int, pageSize int) (int, []models.Product) {
+	c := make(chan int64)
+	errChan := make(chan error)
+	go r.countDocument(searchFilter, c, errChan)
+
+	var products []models.Product
+	result := r.db.Preload("Category").Order(sortOpt).Where(searchFilter).Limit(pageSize).Offset(offset).Find(&products)
+	if result.Error != nil {
+		return 0, nil
+	}
+	countErr := <-errChan
+	if countErr != nil {
+		return 0, nil
+	}
+	total := <-c
+	return int(total), products
+}
+
+func (r *ProductRepository) countDocument(filter map[string]interface{}, c chan int64, errChan chan error) {
+	var count int64
+	result := r.db.Model(&models.Product{}).Where(filter).Count(&count)
+	if result.Error != nil {
+		errChan <- result.Error
+	}
+	close(errChan)
+	c <- count
+}
