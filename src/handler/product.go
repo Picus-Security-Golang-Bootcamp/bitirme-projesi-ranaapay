@@ -32,7 +32,8 @@ func (h ProductHandler) listProducts(c *gin.Context) {
 	searchFilter := helper.SetSearchFilter(reqQueries)
 	total, res := h.productService.FindProducts(searchFilter, sortOpt, pageNum, pageSize)
 	productsRes := responseType.NewProductsResponseType(res)
-	c.JSON(http.StatusOK, responseType.NewPaginationType(pageNum, pageSize, total, productsRes))
+	paginationRes := responseType.NewPaginationType(pageNum, pageSize, total, productsRes)
+	c.JSON(http.StatusOK, responseType.NewResponseType(http.StatusOK, paginationRes))
 }
 
 func (h *ProductHandler) createProducts(c *gin.Context) {
