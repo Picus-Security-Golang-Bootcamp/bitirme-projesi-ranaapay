@@ -6,10 +6,6 @@ import (
 	"strconv"
 )
 
-var (
-	StockNumberVar = "stock_number"
-)
-
 func SetSearchFilter(values url.Values) map[string]interface{} {
 	var filter = make(map[string]interface{})
 	for i, v := range values {
