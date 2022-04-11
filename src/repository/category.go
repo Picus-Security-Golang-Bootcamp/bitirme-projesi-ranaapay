@@ -38,3 +38,17 @@ func (r *CategoryRepository) FindCategories() *[]models.Category {
 	}
 	return &categories
 }
+
+func (r *CategoryRepository) FindCategory(id string) *models.Category {
+	var category models.Category
+	result := r.db.Where(&models.Category{
+		Base: models.Base{
+			Id:        id,
+			IsDeleted: false,
+		},
+	}).First(&category)
+	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		return nil
+	}
+	return &category
+}
