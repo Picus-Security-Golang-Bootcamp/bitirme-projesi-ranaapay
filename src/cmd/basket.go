@@ -51,6 +51,11 @@ func Execute() {
 	categoryService := service.NewCategoryService(categoryRepo)
 	handler.NewCategoryHandler(categoryRouter, cfg.JWTConfig, categoryService)
 
+	productRouter := rootRouter.Group("/product")
+	productRepo := repository.NewProductRepository(db)
+	productService := service.NewProductService(productRepo)
+	handler.NewProductHandler(productRouter, cfg.JWTConfig, productService, categoryService)
+
 	if err = srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		log.Fatalf("listen: %s\n", err)
 	}
