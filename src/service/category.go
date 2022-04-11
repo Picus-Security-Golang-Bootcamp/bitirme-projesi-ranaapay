@@ -23,3 +23,7 @@ func (s *CategoryService) CreateCategories(file io.Reader) {
 func (s *CategoryService) FindCategories() *[]models.Category {
 	return s.repo.FindCategories()
 }
+
+func (s *CategoryService) FindCategory(id string) *models.Category {
+	return s.repo.FindCategory(id)
+}
