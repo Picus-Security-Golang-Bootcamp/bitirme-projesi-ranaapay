@@ -20,12 +20,12 @@ func NewProductRepository(db *gorm.DB) *ProductRepository {
 func (r *ProductRepository) CreateProduct(product models.Product) string {
 	result := r.db.Create(&product)
 	if result.Error != nil {
-		errorHandler.Panic(errorHandler.DBCreateError)
+		return ""
 	}
 	return product.Id
 }
 
-func (r *ProductRepository) DeleteProduct(id string) {
+func (r *ProductRepository) DeleteProduct(id string) int64 {
 	result := r.db.Model(models.Product{}).Where("id = ?", id).Updates(models.Product{
 		Base: models.Base{
 			DeletedAt: time.Now(),
@@ -33,11 +33,12 @@ func (r *ProductRepository) DeleteProduct(id string) {
 		},
 	})
 	if result.Error != nil {
-		errorHandler.Panic(errorHandler.DBDeleteError)
+		return 0
 	}
 	if result.RowsAffected == 0 {
-		errorHandler.Panic(errorHandler.NotFoundError)
+		return 0
 	}
+	return result.RowsAffected
 }
 
 func (r *ProductRepository) migrations() {
