@@ -11,7 +11,7 @@ func GenerateJwtToken(user models.User, cfg config.JWTConfig) string {
 	secretKey := []byte(cfg.SecretKey)
 	claims := models.UserClaims{
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: cfg.SessionTime,
+			ExpiresAt: time.Now().Add(time.Duration(cfg.SessionTime) * time.Second).Unix(),
 		},
 		UserId: user.Id,
 		Role:   user.Role,
