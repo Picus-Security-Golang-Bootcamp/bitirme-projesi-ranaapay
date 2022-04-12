@@ -4,7 +4,10 @@ import (
 	"PicusFinalCase/src/models"
 	"PicusFinalCase/src/pkg/config"
 	"PicusFinalCase/src/pkg/errorHandler"
+	"encoding/json"
+	"fmt"
 	"github.com/golang-jwt/jwt"
+	"time"
 )
 
 func GenerateJwtToken(user models.User, cfg config.JWTConfig) string {
@@ -22,4 +25,33 @@ func GenerateJwtToken(user models.User, cfg config.JWTConfig) string {
 		errorHandler.Panic(errorHandler.GenerateJwtError)
 	}
 	return tokenString
+}
+
+func VerifyToken(token string, secret string) *models.UserClaims {
+	secretKey := []byte(secret)
+	decodedToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("There was an error in parsing")
+		}
+		return secretKey, nil
+	})
+	if err != nil {
+		fmt.Println(err)
+		return nil
+	}
+	if !decodedToken.Valid {
+		fmt.Println(5)
+		return nil
+	}
+	claims, ok := decodedToken.Claims.(jwt.MapClaims)
+	if !ok {
+		fmt.Println(4)
+		return nil
+	}
+
+	var userClaims models.UserClaims
+	jsonString, _ := json.Marshal(claims)
+	json.Unmarshal(jsonString, &userClaims)
+
+	return &userClaims
 }
