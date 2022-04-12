@@ -34,4 +34,8 @@ var (
 		Code:    http.StatusUnauthorized,
 		Message: "The password you entered is incorrect. Please enter valid password.",
 	}
+	FirstNameError = _type.ErrorType{
+		Code:    http.StatusUnauthorized,
+		Message: "The firstname you entered is incorrect. Please enter valid firstname.",
+	}
 )

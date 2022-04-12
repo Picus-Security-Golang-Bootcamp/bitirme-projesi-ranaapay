@@ -54,17 +54,21 @@ var (
 		Code:    http.StatusInternalServerError,
 		Message: "DBCreate error.",
 	}
+	DBDeleteError = _type.ErrorType{
+		Code:    http.StatusInternalServerError,
+		Message: "DBDelete error.",
+	}
+	NotAuthorizedError = _type.ErrorType{
+		Code:    http.StatusUnauthorized,
+		Message: "Not Authorized Error",
+	}
+	ForbiddenError = _type.ErrorType{
+		Code:    http.StatusForbidden,
+		Message: "You are not authorized to access the requested resource.",
+	}
 	ConvertError = _type.ErrorType{
 		Code:    http.StatusBadRequest,
 		Message: "Convert error.",
-	}
-	QuantityValidationError = _type.ErrorType{
-		Code:    http.StatusBadRequest,
-		Message: "Quantity is required, it can not be lower than 1.",
-	}
-	PriceValidationError = _type.ErrorType{
-		Code:    http.StatusBadRequest,
-		Message: "Price is required, it can not be lower than 1.",
 	}
 	InternalServerError = _type.ErrorType{
 		Code:    http.StatusInternalServerError,
