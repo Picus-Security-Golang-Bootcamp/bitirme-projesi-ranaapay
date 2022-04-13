@@ -26,4 +26,8 @@ var (
 		Code:    http.StatusBadRequest,
 		Message: "The product you entered is already in your cart.",
 	}
+	ProductNotExistInCartError = _type.ErrorType{
+		Code:    http.StatusBadRequest,
+		Message: "The product you entered is not in your cart. Please either add the product to your cart first or enter a valid productId.",
+	}
 )
