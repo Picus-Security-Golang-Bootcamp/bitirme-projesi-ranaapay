@@ -82,6 +82,20 @@ func (s *CartService) UpdateCartDetail(userId string, cartDetail *models.CartDet
 	return cartDetail
 }
 
+func (s *CartService) DeleteCartDetail(userId string, productId string) {
+	cart := s.findUserCart(userId)
+	existDetailCart := findIfProductExistInCart(productId, cart.CartDetails)
+	if existDetailCart == nil {
+		errorHandler.Panic(errorHandler.ProductNotExistInCartError)
+	}
+	if res := s.cartRepo.DeleteCartDetails(*existDetailCart); res == false {
+		errorHandler.Panic(errorHandler.DBDeleteError)
+	}
+	cartTotal := cart.TotalCartPrice.Add(existDetailCart.DetailTotalPrice.Neg())
+	cart.SetTotalCartPrice(cartTotal)
+	s.updateCart(cart)
+}
+
 func (s *CartService) findUserCart(id string) *models.Cart {
 	cart := s.cartRepo.FindUserCart(id)
 	if cart == nil {

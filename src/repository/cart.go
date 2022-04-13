@@ -67,3 +67,11 @@ func (r *CartRepository) UpdateUserCartDetail(id string, options models.CartDeta
 	}
 	return result.RowsAffected
 }
+
+func (r *CartRepository) DeleteCartDetails(detail models.CartDetails) bool {
+	result := r.db.Unscoped().Delete(&detail)
+	if result.Error != nil {
+		return false
+	}
+	return true
+}
