@@ -46,7 +46,6 @@ func (r *CartRepository) CreateUserCart(id string) *models.Cart {
 
 func (r *CartRepository) UpdateUserCart(id string, options models.Cart) int64 {
 	result := r.db.Model(&models.Cart{}).Where("id = ?", id).Updates(options)
-	//result := r.db.Save(&cart)
 	if result.Error != nil {
 		return 0
 	}
@@ -59,4 +58,12 @@ func (r *CartRepository) CreateCartDetail(detail models.CartDetails) string {
 		return ""
 	}
 	return detail.Id
+}
+
+func (r *CartRepository) UpdateUserCartDetail(id string, options models.CartDetails) int64 {
+	result := r.db.Model(&models.CartDetails{}).Where("id = ?", id).Updates(options)
+	if result.Error != nil {
+		return 0
+	}
+	return result.RowsAffected
 }
