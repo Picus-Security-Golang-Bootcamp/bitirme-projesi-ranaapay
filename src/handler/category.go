@@ -5,8 +5,8 @@ import (
 	"PicusFinalCase/src/models"
 	"PicusFinalCase/src/pkg/config"
 	"PicusFinalCase/src/pkg/errorHandler"
+	"PicusFinalCase/src/pkg/middleware"
 	"PicusFinalCase/src/service"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -17,15 +17,14 @@ type CategoryHandler struct {
 
 func NewCategoryHandler(r *gin.RouterGroup, config config.JWTConfig, categoryService *service.CategoryService) {
 	h := &CategoryHandler{service: categoryService}
-	r.POST("/", h.createCategories)
-	//r.POST("/", middleware.AuthMiddleware(config.SecretKey), h.createCategories)
+	//r.POST("/", h.createCategories)
+	r.POST("/", middleware.AuthMiddleware(config.SecretKey), h.createCategories)
 	r.GET("/", h.FindCategories)
 }
 
 func (h *CategoryHandler) createCategories(c *gin.Context) {
 	userRole, ok := c.Get("role")
 	if !ok {
-		fmt.Println("handler : 28")
 		errorHandler.Panic(errorHandler.NotAuthorizedError)
 	}
 	if userRole != models.Admin {
