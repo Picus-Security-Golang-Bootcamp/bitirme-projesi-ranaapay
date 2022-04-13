@@ -28,6 +28,6 @@ var (
 	}
 	ProductNotExistInCartError = _type.ErrorType{
 		Code:    http.StatusBadRequest,
-		Message: "The product you entered is not in your cart. Please either add the product to your cart first or enter a valid productId.",
+		Message: "The product you entered is not in your cart. Please enter a valid productId.",
 	}
 )
