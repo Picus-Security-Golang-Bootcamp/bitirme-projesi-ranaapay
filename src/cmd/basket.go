@@ -32,7 +32,7 @@ func Execute() {
 	r := gin.New()
 
 	srv := &http.Server{
-		Addr:         fmt.Sprintf(":%s", cfg.ServerConfig.Port),
+		Addr:         fmt.Sprintf("127.0.0.1:%s", cfg.ServerConfig.Port),
 		Handler:      r,
 		ReadTimeout:  time.Duration(cfg.ServerConfig.ReadTimeoutSecs * int64(time.Second)),
 		WriteTimeout: time.Duration(cfg.ServerConfig.WriteTimeoutSecs * int64(time.Second)),
