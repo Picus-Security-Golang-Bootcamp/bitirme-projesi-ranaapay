@@ -49,3 +49,7 @@ func (d *CartDetails) SetDetailTotalPrice(total decimal.Decimal) {
 func (d *CartDetails) SetCartId(cartId string) {
 	d.CartId = cartId
 }
+
+func (d *CartDetails) SetUpdatedAt() {
+	d.UpdatedAt = time.Now()
+}
