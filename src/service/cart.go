@@ -33,7 +33,7 @@ func (s *CartService) AddToCart(userId string, cartDetail *models.CartDetails) *
 	}
 	cart := s.findUserCart(userId)
 	isExistProduct := findIfProductExistInCart(cartDetail.ProductId, cart.CartDetails)
-	if isExistProduct == true {
+	if isExistProduct != nil {
 		errorHandler.Panic(errorHandler.ProductExistInCartError)
 	}
 	detailPrice := product.Price.Mul(decimal.NewFromInt(cartDetail.ProductQuantity))
@@ -44,6 +44,39 @@ func (s *CartService) AddToCart(userId string, cartDetail *models.CartDetails) *
 		errorHandler.Panic(errorHandler.DBCreateError)
 	}
 	cartTotal := cart.TotalCartPrice.Add(cartDetail.DetailTotalPrice)
+	cart.SetTotalCartPrice(cartTotal)
+	s.updateCart(cart)
+	return cartDetail
+}
+
+func (s *CartService) UpdateCartDetail(userId string, cartDetail *models.CartDetails) *models.CartDetails {
+	cart := s.findUserCart(userId)
+	existDetailCart := findIfProductExistInCart(cartDetail.ProductId, cart.CartDetails)
+	if existDetailCart == nil {
+		errorHandler.Panic(errorHandler.ProductNotExistInCartError)
+	}
+	product := s.productRepo.FindProductById(cartDetail.ProductId)
+	if product == nil {
+		errorHandler.Panic(errorHandler.ProductIdNotValidError)
+	}
+	if product.StockNumber < int(cartDetail.ProductQuantity) {
+		errorHandler.Panic(errorHandler.QuantityNotValidError)
+	}
+	detailPrice := product.Price.Mul(decimal.NewFromInt(cartDetail.ProductQuantity))
+	cartDetail.SetDetailTotalPrice(detailPrice)
+	cartDetail.SetUpdatedAt()
+	updateOptions := models.CartDetails{
+		Base: models.Base{
+			UpdatedAt: cartDetail.UpdatedAt,
+		},
+		ProductQuantity:  cartDetail.ProductQuantity,
+		DetailTotalPrice: cartDetail.DetailTotalPrice,
+	}
+	rawEffected := s.cartRepo.UpdateUserCartDetail(existDetailCart.Id, updateOptions)
+	if rawEffected == 0 {
+		errorHandler.Panic(errorHandler.DBUpdateError)
+	}
+	cartTotal := cart.TotalCartPrice.Add(existDetailCart.DetailTotalPrice.Neg()).Add(cartDetail.DetailTotalPrice)
 	cart.SetTotalCartPrice(cartTotal)
 	s.updateCart(cart)
 	return cartDetail
@@ -77,11 +110,11 @@ func (s *CartService) updateCart(cart *models.Cart) {
 	}
 }
 
-func findIfProductExistInCart(productId string, details []models.CartDetails) bool {
+func findIfProductExistInCart(productId string, details []models.CartDetails) *models.CartDetails {
 	for _, detail := range details {
 		if productId == detail.ProductId {
-			return true
+			return &detail
 		}
 	}
-	return false
+	return nil
 }

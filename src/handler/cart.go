@@ -22,6 +22,7 @@ func NewCartHandler(r *gin.RouterGroup, config config.JWTConfig, cartService *se
 
 	r.POST("", middleware.AuthMiddleware(config.SecretKey), h.AddToCart)
 	r.GET("", middleware.AuthMiddleware(config.SecretKey), h.ListCartItems)
+	r.PUT("", middleware.AuthMiddleware(config.SecretKey), h.UpdateCartItems)
 }
 
 func (h *CartHandler) AddToCart(c *gin.Context) {
@@ -49,4 +50,21 @@ func (h *CartHandler) ListCartItems(c *gin.Context) {
 	res := h.cartService.ListCartItems(userId.(string))
 	cartRes := responseType.NewCartResponseType(*res)
 	c.JSON(http.StatusOK, responseType.NewResponseType(http.StatusOK, cartRes))
+}
+
+func (h CartHandler) UpdateCartItems(c *gin.Context) {
+	userId, ok := c.Get("id")
+	if !ok {
+		errorHandler.Panic(errorHandler.NotAuthorizedError)
+	}
+	var reqDetail requestType.CartDetailsRequestType
+	if err := c.Bind(&reqDetail); err != nil {
+		errorHandler.Panic(errorHandler.BindError)
+	}
+	reqDetail.ValidateCartDetailsRequest()
+	cartDetail := reqDetail.RequestToDetailType()
+	res := h.cartService.UpdateCartDetail(userId.(string), cartDetail)
+	detailRes := responseType.NewCartDetailResponseType(*res)
+	c.JSON(http.StatusOK, responseType.NewResponseType(http.StatusOK, detailRes))
+	return
 }
