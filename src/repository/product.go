@@ -3,6 +3,7 @@ package repository
 import (
 	"PicusFinalCase/src/models"
 	"PicusFinalCase/src/pkg/errorHandler"
+	"errors"
 	"gorm.io/gorm"
 	"time"
 )
@@ -19,6 +20,15 @@ func NewProductRepository(db *gorm.DB) *ProductRepository {
 	productRepo := ProductRepository{db: db}
 	productRepo.migrations()
 	return &productRepo
+}
+
+func (r *ProductRepository) FindProductById(id string) *models.Product {
+	var product models.Product
+	result := r.db.Where("id = ?", id).Where(IsDeletedFilterVar).First(&product)
+	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		return nil
+	}
+	return &product
 }
 
 func (r *ProductRepository) CreateProduct(product models.Product) string {

@@ -17,6 +17,14 @@ func NewProductService(productRepo *repository.ProductRepository) *ProductServic
 	}
 }
 
+func (s *ProductService) FindByProductId(id string) *models.Product {
+	res := s.repo.FindProductById(id)
+	if res == nil {
+		errorHandler.Panic(errorHandler.NotFoundError)
+	}
+	return res
+}
+
 func (s *ProductService) CreateProduct(product models.Product) string {
 	productId := s.repo.CreateProduct(product)
 	if productId == "" {

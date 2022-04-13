@@ -24,10 +24,18 @@ func NewProductHandler(r *gin.RouterGroup, config config.JWTConfig, productServi
 	r.POST("", h.createProducts)
 	r.DELETE("/:id", h.deleteProducts)
 	r.GET("", h.listProducts)
+	r.GET("/:id", h.findProductById)
 	r.PUT("/:id", h.updateProducts)
 }
 
-func (h ProductHandler) listProducts(c *gin.Context) {
+func (h *ProductHandler) findProductById(c *gin.Context) {
+	pId := c.Param("id")
+	res := h.productService.FindByProductId(pId)
+	prodRes := responseType.NewProductResponseType(*res)
+	c.JSON(http.StatusOK, responseType.NewResponseType(http.StatusOK, prodRes))
+}
+
+func (h *ProductHandler) listProducts(c *gin.Context) {
 	reqQueries := c.Request.URL.Query()
 	sortOpt, pageNum, pageSize := helper.SetPaginationOptions(&reqQueries)
 	searchFilter := helper.SetSearchFilter(reqQueries)
