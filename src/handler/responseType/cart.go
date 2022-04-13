@@ -10,10 +10,26 @@ type CartDetailResponseType struct {
 	DetailTotalPrice string `json:"detailTotalPrice"`
 }
 
+type CartResponseType struct {
+	TotalCartPrice string `json:"totalCartPrice"`
+	CartDetails    []CartDetailResponseType
+}
+
 func NewCartDetailResponseType(detail models.CartDetails) CartDetailResponseType {
 	return CartDetailResponseType{
 		ProductId:        detail.ProductId,
 		ProductQuantity:  detail.ProductQuantity,
 		DetailTotalPrice: detail.DetailTotalPrice.String(),
+	}
+}
+
+func NewCartResponseType(cart models.Cart) CartResponseType {
+	var detailsRes []CartDetailResponseType
+	for _, detail := range cart.CartDetails {
+		detailsRes = append(detailsRes, NewCartDetailResponseType(detail))
+	}
+	return CartResponseType{
+		TotalCartPrice: cart.TotalCartPrice.String(),
+		CartDetails:    detailsRes,
 	}
 }

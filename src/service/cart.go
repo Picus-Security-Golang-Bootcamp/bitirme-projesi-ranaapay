@@ -19,6 +19,10 @@ func NewCartService(cartRepo *repository.CartRepository, prodRepo *repository.Pr
 	}
 }
 
+func (s *CartService) ListCartItems(userId string) *models.Cart {
+	return s.findUserCart(userId)
+}
+
 func (s *CartService) AddToCart(userId string, cartDetail *models.CartDetails) *models.CartDetails {
 	product := s.productRepo.FindProductById(cartDetail.ProductId)
 	if product == nil {
