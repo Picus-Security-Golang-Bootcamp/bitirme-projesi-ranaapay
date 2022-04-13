@@ -56,6 +56,11 @@ func Execute() {
 	productService := service.NewProductService(productRepo)
 	handler.NewProductHandler(productRouter, cfg.JWTConfig, productService, categoryService)
 
+	cartRouter := rootRouter.Group("/cart")
+	cartRepo := repository.NewCartRepository(db)
+	cartService := service.NewCartService(cartRepo, productRepo)
+	handler.NewCartHandler(cartRouter, cfg.JWTConfig, cartService)
+
 	if err = srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		log.Fatalf("listen: %s\n", err)
 	}
