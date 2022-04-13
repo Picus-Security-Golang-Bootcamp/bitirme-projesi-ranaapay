@@ -54,6 +54,10 @@ var (
 		Code:    http.StatusInternalServerError,
 		Message: "DBUpdate error.",
 	}
+	DBDeleteError = _type.ErrorType{
+		Code:    http.StatusInternalServerError,
+		Message: "DBDelete error.",
+	}
 	NotAuthorizedError = _type.ErrorType{
 		Code:    http.StatusUnauthorized,
 		Message: "Not Authorized Error",
