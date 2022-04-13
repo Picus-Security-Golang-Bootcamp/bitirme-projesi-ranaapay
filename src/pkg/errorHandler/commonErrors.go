@@ -42,10 +42,6 @@ var (
 		Code:    http.StatusInternalServerError,
 		Message: "Form File Error",
 	}
-	ConvertIdError = _type.ErrorType{
-		Code:    http.StatusBadRequest,
-		Message: "Id is not valid. Please write valid Id.",
-	}
 	DBMigrateError = _type.ErrorType{
 		Code:    http.StatusInternalServerError,
 		Message: "DBMigrate error.",
@@ -54,9 +50,9 @@ var (
 		Code:    http.StatusInternalServerError,
 		Message: "DBCreate error.",
 	}
-	DBDeleteError = _type.ErrorType{
+	DBUpdateError = _type.ErrorType{
 		Code:    http.StatusInternalServerError,
-		Message: "DBDelete error.",
+		Message: "DBUpdate error.",
 	}
 	NotAuthorizedError = _type.ErrorType{
 		Code:    http.StatusUnauthorized,
