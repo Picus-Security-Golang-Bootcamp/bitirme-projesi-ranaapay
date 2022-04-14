@@ -21,3 +21,10 @@ func (b *Base) BeforeCreate(tx *gorm.DB) (err error) {
 	b.IsDeleted = false
 	return
 }
+
+func (b *Base) GetUpdatedAt() time.Time {
+	return b.UpdatedAt
+}
+func (b *Base) SetUpdatedAt() {
+	b.UpdatedAt = time.Now()
+}
