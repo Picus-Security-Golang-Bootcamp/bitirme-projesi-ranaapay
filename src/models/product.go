@@ -32,9 +32,18 @@ func (p *Product) GetProductStockNumber() int {
 func (p *Product) GetProductCategoryId() string {
 	return p.CategoryId
 }
+func (p *Product) GetProductUnitsOnCart() int {
+	return p.UnitsOnCart
+}
 
 func (p *Product) SetProductId(id string) {
 	p.Id = id
+}
+func (p *Product) SetProductUnitsOnCart(units int) {
+	p.UnitsOnCart = units
+}
+func (p *Product) SetProductStockNumber(stock int) {
+	p.StockNumber = stock
 }
 func (p *Product) SetProductUpdatedAt() {
 	p.UpdatedAt = time.Now()
