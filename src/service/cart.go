@@ -3,6 +3,7 @@ package service
 import (
 	"PicusFinalCase/src/models"
 	"PicusFinalCase/src/pkg/errorHandler"
+	"PicusFinalCase/src/pkg/helper"
 	"PicusFinalCase/src/repository"
 	"github.com/shopspring/decimal"
 )
@@ -24,11 +25,15 @@ func (s *CartService) ListCartItems(userId string) *models.Cart {
 }
 
 func (s *CartService) AddToCart(userId string, cartDetail *models.CartDetails) *models.CartDetails {
+
+	//Find the product that its id matches the cartDetail productId.
 	product := s.productRepo.FindProductById(cartDetail.ProductId)
 	if product == nil {
 		errorHandler.Panic(errorHandler.ProductIdNotValidError)
 	}
-	if product.StockNumber < int(cartDetail.ProductQuantity) {
+
+	//Checking the request product quantity by product's quantity that found.
+	if (product.StockNumber - product.UnitsOnCart) < int(cartDetail.ProductQuantity) {
 		errorHandler.Panic(errorHandler.QuantityNotValidError)
 	}
 
@@ -90,6 +95,9 @@ func (s *CartService) UpdateCartDetail(userId string, cartDetail *models.CartDet
 	if validNum < int(cartDetail.ProductQuantity) {
 		errorHandler.Panic(errorHandler.QuantityNotValidError)
 	}
+
+	//Updating the price of the cartDetail according to the price of
+	//the product found and the quantity of the request.
 	detailPrice := product.Price.Mul(decimal.NewFromInt(cartDetail.ProductQuantity))
 	cartDetail.SetDetailTotalPrice(detailPrice)
 	cartDetail.SetUpdatedAt()
@@ -104,9 +112,21 @@ func (s *CartService) UpdateCartDetail(userId string, cartDetail *models.CartDet
 	if rawEffected == 0 {
 		errorHandler.Panic(errorHandler.DBUpdateError)
 	}
+
+	//Updating cart price according to updated cartDetail.
 	cartTotal := cart.TotalCartPrice.Add(existDetailCart.DetailTotalPrice.Neg()).Add(cartDetail.DetailTotalPrice)
 	cart.SetTotalCartPrice(cartTotal)
 	s.updateCart(cart)
+
+	//Calculating and Updating products unitsOnCart field.
+	productUnitsOnCart := product.UnitsOnCart - int(existDetailCart.ProductQuantity) + int(cartDetail.ProductQuantity)
+	product.SetProductUnitsOnCart(productUnitsOnCart)
+	product.SetUpdatedAt()
+	_, err := s.productRepo.UpdateProduct(*product, helper.SetProductUpdateOptions(*product))
+	if err != nil {
+		errorHandler.Panic(errorHandler.InternalServerError)
+	}
+
 	return cartDetail
 }
 
