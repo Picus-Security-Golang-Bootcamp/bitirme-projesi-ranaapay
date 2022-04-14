@@ -49,8 +49,8 @@ func (s *ProductService) FindProducts(searchFilter map[string]interface{}, sortO
 }
 
 func (s *ProductService) UpdateProduct(product models.Product) models.Product {
-	updateOptions := helper.SetProductUpdateOptions(product)
 	product.SetProductUpdatedAt()
+	updateOptions := helper.SetProductUpdateOptions(product)
 	updatedProduct, err := s.repo.UpdateProduct(product, updateOptions)
 	if err != nil {
 		errorHandler.Panic(errorHandler.InternalServerError)
