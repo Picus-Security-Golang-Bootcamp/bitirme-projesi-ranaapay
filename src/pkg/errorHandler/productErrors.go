@@ -26,4 +26,8 @@ var (
 		Code:    http.StatusBadRequest,
 		Message: "Price is required, it can not be lower than 1.",
 	}
+	UnitsOnCartValidationError = _type.ErrorType{
+		Code:    http.StatusBadRequest,
+		Message: "UnitsOnCart is required, it can not be lower than 0.",
+	}
 )
