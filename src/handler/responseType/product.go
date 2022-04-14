@@ -6,6 +6,7 @@ type ProductWithCategoryResponseType struct {
 	ProductName string               `json:"productName"`
 	Price       string               `json:"price"`
 	StockNumber int                  `json:"stockNumber"`
+	UnitsOnCart int                  `json:"unitsOnCart"`
 	Category    CategoryResponseType `json:"category"`
 }
 
@@ -13,6 +14,7 @@ type ProductResponseType struct {
 	ProductName string `json:"productName"`
 	Price       string `json:"price"`
 	StockNumber int    `json:"stockNumber"`
+	UnitsOnCart int    `json:"unitsOnCart"`
 }
 
 func NewProductWithCategoryResponseType(product models.Product) ProductWithCategoryResponseType {
@@ -20,6 +22,7 @@ func NewProductWithCategoryResponseType(product models.Product) ProductWithCateg
 		ProductName: product.ProductName,
 		Price:       product.Price.String(),
 		StockNumber: product.StockNumber,
+		UnitsOnCart: product.UnitsOnCart,
 		Category:    NewCategoryResponseType(product.Category),
 	}
 }
@@ -28,6 +31,7 @@ func NewProductResponseType(product models.Product) ProductResponseType {
 	return ProductResponseType{
 		ProductName: product.ProductName,
 		Price:       product.Price.String(),
+		UnitsOnCart: product.UnitsOnCart,
 		StockNumber: product.StockNumber,
 	}
 }

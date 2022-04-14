@@ -10,6 +10,7 @@ type ProductRequestType struct {
 	ProductName string  `json:"productName"`
 	Price       float64 `json:"price"`
 	StockNumber int     `json:"stockNumber"`
+	UnitsOnCart int     `json:"unitsOnCart"`
 	CategoryId  string  `json:"categoryId"`
 }
 
@@ -18,7 +19,7 @@ func (req ProductRequestType) RequestToProductType() models.Product {
 		ProductName: req.ProductName,
 		Price:       decimal.NewFromFloat(req.Price),
 		StockNumber: req.StockNumber,
-		UnitsOnCart: 0,
+		UnitsOnCart: req.UnitsOnCart,
 		CategoryId:  req.CategoryId,
 	}
 }
@@ -35,5 +36,8 @@ func (req ProductRequestType) ValidateProductRequest() {
 	}
 	if req.CategoryId == "" {
 		errorHandler.Panic(errorHandler.CategoryIdValidationError)
+	}
+	if req.UnitsOnCart < 0 {
+		errorHandler.Panic(errorHandler.UnitsOnCartValidationError)
 	}
 }
