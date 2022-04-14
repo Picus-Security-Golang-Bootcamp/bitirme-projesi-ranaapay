@@ -70,6 +70,10 @@ var (
 		Code:    http.StatusBadRequest,
 		Message: "Convert error.",
 	}
+	ProductDeletedError = _type.ErrorType{
+		Code:    http.StatusBadRequest,
+		Message: "The product in your cart has been deleted.",
+	}
 	InternalServerError = _type.ErrorType{
 		Code:    http.StatusInternalServerError,
 		Message: "Internal server error.",
