@@ -17,6 +17,7 @@ type Cart struct {
 	Base
 	UserId         string          `json:"userId"`
 	TotalCartPrice decimal.Decimal `json:"totalCartPrice"`
+	IsCompleted    bool            `json:"isCompleted"`
 	CartDetails    []CartDetails
 }
 
