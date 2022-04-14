@@ -4,14 +4,19 @@ import (
 	"PicusFinalCase/src/models"
 	"PicusFinalCase/src/pkg/errorHandler"
 	"gorm.io/gorm"
+	"sync"
 )
 
 type CartRepository struct {
-	db *gorm.DB
+	db  *gorm.DB
+	mux *sync.RWMutex
 }
 
 func NewCartRepository(db *gorm.DB) *CartRepository {
-	cartRepo := CartRepository{db: db}
+	cartRepo := CartRepository{
+		db:  db,
+		mux: &sync.RWMutex{},
+	}
 	cartRepo.migrations()
 	return &cartRepo
 }
@@ -25,9 +30,12 @@ func (r *CartRepository) migrations() {
 	}
 }
 
-func (r *CartRepository) FindUserCart(id string) *models.Cart {
+func (r *CartRepository) FindUserCart(id string, isCompleted bool) *models.Cart {
+	r.mux.Lock()
+	defer r.mux.Unlock()
+
 	var cart models.Cart
-	result := r.db.Preload("CartDetails").Where(models.Cart{UserId: id}).First(&cart)
+	result := r.db.Preload("CartDetails").Where("user_id = ? AND is_completed = ?", id, isCompleted).First(&cart)
 	if result.Error != nil {
 		return nil
 	}
@@ -35,6 +43,9 @@ func (r *CartRepository) FindUserCart(id string) *models.Cart {
 }
 
 func (r *CartRepository) CreateUserCart(id string) *models.Cart {
+	r.mux.Lock()
+	defer r.mux.Unlock()
+
 	var cart models.Cart
 	cart.SetUserId(id)
 	result := r.db.Create(&cart)
@@ -45,6 +56,9 @@ func (r *CartRepository) CreateUserCart(id string) *models.Cart {
 }
 
 func (r *CartRepository) UpdateUserCart(id string, options models.Cart) int64 {
+	r.mux.Lock()
+	defer r.mux.Unlock()
+
 	result := r.db.Model(&models.Cart{}).Where("id = ?", id).Updates(options)
 	if result.Error != nil {
 		return 0

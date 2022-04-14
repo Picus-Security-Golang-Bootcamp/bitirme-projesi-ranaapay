@@ -5,6 +5,7 @@ import (
 	"PicusFinalCase/src/pkg/errorHandler"
 	"errors"
 	"gorm.io/gorm"
+	"sync"
 	"time"
 )
 
@@ -13,16 +14,22 @@ var IsDeletedFilterVar = map[string]interface{}{
 }
 
 type ProductRepository struct {
-	db *gorm.DB
+	db  *gorm.DB
+	mux *sync.RWMutex
 }
 
 func NewProductRepository(db *gorm.DB) *ProductRepository {
-	productRepo := ProductRepository{db: db}
+	productRepo := ProductRepository{
+		db:  db,
+		mux: &sync.RWMutex{},
+	}
 	productRepo.migrations()
 	return &productRepo
 }
 
 func (r *ProductRepository) FindProductById(id string) *models.Product {
+	r.mux.Lock()
+	defer r.mux.Unlock()
 	var product models.Product
 	result := r.db.Where("id = ?", id).Where(IsDeletedFilterVar).First(&product)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
@@ -40,6 +47,8 @@ func (r *ProductRepository) CreateProduct(product models.Product) string {
 }
 
 func (r *ProductRepository) DeleteProduct(id string) int64 {
+	r.mux.Lock()
+	defer r.mux.Unlock()
 	result := r.db.Model(models.Product{}).Where("id = ?", id).Where(IsDeletedFilterVar).Updates(models.Product{
 		Base: models.Base{
 			DeletedAt: time.Now(),
@@ -80,6 +89,9 @@ func (r *ProductRepository) FindProducts(searchFilter map[string]interface{}, so
 }
 
 func (r *ProductRepository) UpdateProduct(product models.Product, options map[string]interface{}) (*models.Product, error) {
+	r.mux.Lock()
+	defer r.mux.Unlock()
+
 	result := r.db.Model(&product).Where(IsDeletedFilterVar).Updates(options)
 	if result.Error != nil {
 		return nil, result.Error
