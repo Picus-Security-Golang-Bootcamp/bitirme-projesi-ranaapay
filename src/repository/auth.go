@@ -21,7 +21,7 @@ func NewAuthRepository(db *gorm.DB) *AuthRepository {
 func (r *AuthRepository) CreateUser(user models.User) *models.User {
 	result := r.db.Create(&user)
 	if result.Error != nil {
-		errorHandler.Panic(errorHandler.DBCreateError)
+		return nil
 	}
 	return &user
 }
@@ -29,11 +29,8 @@ func (r *AuthRepository) CreateUser(user models.User) *models.User {
 func (r *AuthRepository) FindUser(name string) *models.User {
 	var user models.User
 	result := r.db.Where(&models.User{FirstName: name}).First(&user)
-	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		errorHandler.Panic(errorHandler.FirstNameError)
-	}
 	if result.Error != nil {
-		errorHandler.Panic(errorHandler.InternalServerError)
+		return nil
 	}
 	return &user
 }

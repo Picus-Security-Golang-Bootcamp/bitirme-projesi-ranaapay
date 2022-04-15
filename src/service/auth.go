@@ -21,14 +21,24 @@ func NewAuthService(cfg config.JWTConfig, repo *repository.AuthRepository) *Auth
 }
 
 func (s *AuthService) CreateUser(user models.User) string {
+
+	//Encrypts the user's password.
 	user.HashPassword()
+
 	resUser := s.repo.CreateUser(user)
+	if resUser == nil {
+		errorHandler.Panic(errorHandler.DBCreateError)
+	}
+
 	token := helper.GenerateJwtToken(*resUser, s.cfg)
 	return token
 }
 
 func (s *AuthService) LoginUser(name string, password string) string {
 	resUser := s.repo.FindUser(name)
+	if resUser == nil {
+		errorHandler.Panic(errorHandler.FirstNameError)
+	}
 	if result := resUser.CheckPasswordHash(password); !result {
 		errorHandler.Panic(errorHandler.PasswordNotTrueError)
 	}
