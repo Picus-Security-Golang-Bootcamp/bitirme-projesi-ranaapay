@@ -30,12 +30,24 @@ func (r *CartRepository) migrations() {
 	}
 }
 
-func (r *CartRepository) FindUserCart(id string, isCompleted bool) *models.Cart {
+func (r *CartRepository) FindUserCart(userId string, isCompleted bool) *models.Cart {
 	r.mux.Lock()
 	defer r.mux.Unlock()
 
 	var cart models.Cart
-	result := r.db.Preload("CartDetails").Where("user_id = ? AND is_completed = ?", id, isCompleted).First(&cart)
+	result := r.db.Preload("CartDetails").Where("user_id = ? AND is_completed = ?", userId, isCompleted).First(&cart)
+	if result.Error != nil {
+		return nil
+	}
+	return &cart
+}
+
+func (r *CartRepository) FindUserCartById(cartId string, isCompleted bool) *models.Cart {
+	r.mux.Lock()
+	defer r.mux.Unlock()
+
+	var cart models.Cart
+	result := r.db.Preload("CartDetails").Where("id = ? AND is_completed = ?", cartId, isCompleted).First(&cart)
 	if result.Error != nil {
 		return nil
 	}
