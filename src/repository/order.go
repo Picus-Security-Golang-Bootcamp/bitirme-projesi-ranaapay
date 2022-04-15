@@ -3,7 +3,9 @@ package repository
 import (
 	"PicusFinalCase/src/models"
 	"PicusFinalCase/src/pkg/errorHandler"
+	"errors"
 	"gorm.io/gorm"
+	"time"
 )
 
 type OrderRepository struct {
@@ -37,4 +39,30 @@ func (r *OrderRepository) FindUserOrders(userId string) []models.Order {
 		return nil
 	}
 	return orders
+}
+
+func (r *OrderRepository) FindOrderById(orderId string) *models.Order {
+	var order models.Order
+	result := r.db.Where("id = ?", orderId).Where("is_cancelled = ?", false).First(&order)
+	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		return nil
+	}
+	return &order
+}
+
+func (r *OrderRepository) CancelOrderById(id string) int64 {
+	result := r.db.Model(models.Order{}).Where("id = ?", id).Where(IsDeletedFilterVar).Updates(models.Order{
+		Base: models.Base{
+			DeletedAt: time.Now(),
+			IsDeleted: true,
+		},
+		IsCancelled: true,
+	})
+	if result.Error != nil {
+		return 0
+	}
+	if result.RowsAffected == 0 {
+		return 0
+	}
+	return result.RowsAffected
 }
