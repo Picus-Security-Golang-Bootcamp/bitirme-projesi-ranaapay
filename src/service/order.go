@@ -8,6 +8,11 @@ import (
 	"time"
 )
 
+const (
+	CreateVar = "order create"
+	CancelVar = "order cancel"
+)
+
 type OrderService struct {
 	orderRepo   *repository.OrderRepository
 	productRepo *repository.ProductRepository
@@ -35,7 +40,7 @@ func (s *OrderService) CreateOrder(userId string) string {
 	}
 
 	//Updates products unitsOnCart, stockNumber, and updatedAt fields.
-	s.updateProduct(cart.CartDetails)
+	s.updateProduct(CreateVar, cart.CartDetails)
 
 	//Update carts isCompleted, and updatedAt fields.
 	updateOptions := models.Cart{
@@ -59,7 +64,55 @@ func (s *OrderService) CreateOrder(userId string) string {
 	return id
 }
 
-func (s *OrderService) updateProduct(cartDetails []models.CartDetails) {
+func (s *OrderService) ListOrders(userId string) []models.Order {
+	res := s.orderRepo.FindUserOrders(userId)
+	if len(res) == 0 {
+		errorHandler.Panic(errorHandler.NotFoundError)
+	}
+	return res
+}
+
+func (s *OrderService) CancelOrder(orderId string) {
+
+	//Find order by its id
+	order := s.orderRepo.FindOrderById(orderId)
+	if order == nil {
+		errorHandler.Panic(errorHandler.NotFoundError)
+	}
+
+	//Check if 14 days have passed since the order was created.
+	toAdd := 14 * 24 * time.Hour
+	limitTime := order.CreatedAt.Add(toAdd)
+	if order.CreatedAt.After(limitTime) {
+		errorHandler.Panic(errorHandler.OrderCanNotCancelledError)
+	}
+
+	//Cancel order by its id
+	if res := s.orderRepo.CancelOrderById(orderId); res == 0 {
+		errorHandler.Panic(errorHandler.NotFoundError)
+	}
+
+	//Finds users cart by given its. If cannot be found gives an error.
+	cart := s.cartRepo.FindUserCartById(order.CartId, true)
+	if cart == nil {
+		errorHandler.Panic(errorHandler.CartNotFoundError)
+	}
+
+	//Update carts isDeleted, and deletedAt fields.
+	updateOptions := models.Cart{
+		Base: models.Base{DeletedAt: time.Now(), IsDeleted: true},
+	}
+	rawEffected := s.cartRepo.UpdateUserCart(cart.Id, updateOptions)
+	if rawEffected == 0 {
+		errorHandler.Panic(errorHandler.DBUpdateError)
+	}
+
+	//Updates products unitsOnCart, stockNumber, and updatedAt fields.
+	s.updateProduct(CancelVar, cart.CartDetails)
+
+}
+
+func (s *OrderService) updateProduct(options string, cartDetails []models.CartDetails) {
 
 	for _, detail := range cartDetails {
 
@@ -69,13 +122,20 @@ func (s *OrderService) updateProduct(cartDetails []models.CartDetails) {
 			errorHandler.Panic(errorHandler.ProductDeletedError)
 		}
 
-		//Calculating and Updating products unitsOnCart, updatedAt, and stockNumber fields.
-		productUnitsOnCart := product.UnitsOnCart - int(detail.ProductQuantity)
+		//Calculating and Updating products unitsOnCart, updatedAt, and stockNumber fields depending on order crud operation.
+		var productUnitsOnCart int
+		var productStockNum int
+
+		if options == CreateVar {
+			productUnitsOnCart = product.UnitsOnCart - int(detail.ProductQuantity)
+			productStockNum = product.StockNumber - int(detail.ProductQuantity)
+		} else if options == CancelVar {
+			productUnitsOnCart = product.GetProductUnitsOnCart()
+			productStockNum = productStockNum + int(detail.ProductQuantity)
+		}
+
 		product.SetProductUnitsOnCart(productUnitsOnCart)
-
 		product.SetUpdatedAt()
-
-		productStockNum := product.StockNumber - int(detail.ProductQuantity)
 		product.SetProductStockNumber(productStockNum)
 
 		_, err := s.productRepo.UpdateProduct(*product, helper.SetProductUpdateOptions(*product))
@@ -83,12 +143,4 @@ func (s *OrderService) updateProduct(cartDetails []models.CartDetails) {
 			errorHandler.Panic(errorHandler.InternalServerError)
 		}
 	}
-}
-
-func (s *OrderService) ListOrders(userId string) []models.Order {
-	res := s.orderRepo.FindUserOrders(userId)
-	if len(res) == 0 {
-		errorHandler.Panic(errorHandler.NotFoundError)
-	}
-	return res
 }
