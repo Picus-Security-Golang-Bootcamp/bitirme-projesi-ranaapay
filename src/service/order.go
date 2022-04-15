@@ -22,7 +22,7 @@ func NewOrderService(orderRepo *repository.OrderRepository, prodRepo *repository
 	}
 }
 
-func (s *OrderService) CreateOrder(userId string) models.Order {
+func (s *OrderService) CreateOrder(userId string) string {
 
 	//Finds users cart by given userId. If cannot be found gives an error.
 	//If cannot be found or the cart has not any cartDetail gives an error.
@@ -56,7 +56,7 @@ func (s *OrderService) CreateOrder(userId string) models.Order {
 	if id == "" {
 		errorHandler.Panic(errorHandler.DBCreateError)
 	}
-	return order
+	return id
 }
 
 func (s *OrderService) updateProduct(cartDetails []models.CartDetails) {
