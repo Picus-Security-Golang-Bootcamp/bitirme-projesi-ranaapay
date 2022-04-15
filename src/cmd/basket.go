@@ -9,8 +9,9 @@ import (
 	"PicusFinalCase/src/service"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"log"
+	log "github.com/sirupsen/logrus"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -19,14 +20,21 @@ var (
 )
 
 func Execute() {
+
+	//Read Config yaml
 	cfg, err := config.LoadConfig(ConfigFile)
 	if err != nil {
 		log.Fatalf("LoadConfig: %v", err)
 	}
+
+	//Initialize db
 	db, err := db.NewPsqlDB(cfg)
 	if err != nil {
 		log.Fatalf("DatabaseConnect: %v", err)
 	}
+
+	log.SetOutput(os.Stdout)
+	log.SetFormatter(&log.JSONFormatter{})
 
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
@@ -40,6 +48,7 @@ func Execute() {
 
 	rootRouter := r.Group(cfg.ServerConfig.RoutePrefix)
 	rootRouter.Use(middleware.Recovery())
+	rootRouter.Use(middleware.LoggingMiddleware())
 
 	authenticationRouter := rootRouter.Group("/authentication")
 	authRepo := repository.NewAuthRepository(db)
