@@ -1,5 +1,7 @@
 package responseType
 
+import log "github.com/sirupsen/logrus"
+
 type ResponseType struct {
 	Code    int         `json:"code"`
 	Message interface{} `json:"message"`
@@ -20,6 +22,7 @@ type PaginationType struct {
 }
 
 func NewPaginationType(page int, pageSize int, totalCount int, items interface{}) PaginationType {
+	log.Info("Created PaginationType.")
 	return PaginationType{
 		Page:       page,
 		PageSize:   pageSize,

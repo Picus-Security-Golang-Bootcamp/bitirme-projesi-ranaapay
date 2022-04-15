@@ -2,6 +2,7 @@ package responseType
 
 import (
 	"PicusFinalCase/src/models"
+	log "github.com/sirupsen/logrus"
 )
 
 type CartDetailResponseType struct {
@@ -16,6 +17,7 @@ type CartResponseType struct {
 }
 
 func NewCartDetailResponseType(detail models.CartDetails) CartDetailResponseType {
+	log.Info("Created CartDetailResponseType according to CartDetails.")
 	return CartDetailResponseType{
 		ProductId:        detail.ProductId,
 		ProductQuantity:  detail.ProductQuantity,
@@ -24,10 +26,13 @@ func NewCartDetailResponseType(detail models.CartDetails) CartDetailResponseType
 }
 
 func NewCartResponseType(cart models.Cart) CartResponseType {
+
 	var detailsRes []CartDetailResponseType
 	for _, detail := range cart.CartDetails {
 		detailsRes = append(detailsRes, NewCartDetailResponseType(detail))
 	}
+
+	log.Info("Created CartResponseType according to Cart.")
 	return CartResponseType{
 		TotalCartPrice: cart.TotalCartPrice.String(),
 		CartDetails:    detailsRes,

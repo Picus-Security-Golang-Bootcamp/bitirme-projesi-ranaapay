@@ -1,6 +1,9 @@
 package responseType
 
-import "PicusFinalCase/src/models"
+import (
+	"PicusFinalCase/src/models"
+	log "github.com/sirupsen/logrus"
+)
 
 type OrderResponseType struct {
 	CartId      string           `json:"cartId"`
@@ -15,6 +18,7 @@ type OrdersResponseType struct {
 }
 
 func NewOrderResponseType(order models.Order) OrderResponseType {
+	log.Info("Created OrderResponseType according to Order.")
 	return OrderResponseType{
 		CartId:      order.CartId,
 		UserId:      order.UserId,
@@ -28,6 +32,8 @@ func NewOrdersResponseType(orders []models.Order) OrdersResponseType {
 	for _, order := range orders {
 		ordersResList = append(ordersResList, NewOrderResponseType(order))
 	}
+
+	log.Info("Created OrdersResponseType according to order slice.")
 	return OrdersResponseType{
 		TotalOrders: len(ordersResList),
 		Orders:      ordersResList,

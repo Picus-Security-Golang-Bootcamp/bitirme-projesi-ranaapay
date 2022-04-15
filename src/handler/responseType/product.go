@@ -1,6 +1,9 @@
 package responseType
 
-import "PicusFinalCase/src/models"
+import (
+	"PicusFinalCase/src/models"
+	log "github.com/sirupsen/logrus"
+)
 
 type ProductWithCategoryResponseType struct {
 	ProductName string               `json:"productName"`
@@ -18,6 +21,7 @@ type ProductResponseType struct {
 }
 
 func NewProductWithCategoryResponseType(product models.Product) ProductWithCategoryResponseType {
+	log.Info("Created ProductWithCategoryResponseType according to Product.")
 	return ProductWithCategoryResponseType{
 		ProductName: product.ProductName,
 		Price:       product.Price.String(),
@@ -28,6 +32,7 @@ func NewProductWithCategoryResponseType(product models.Product) ProductWithCateg
 }
 
 func NewProductResponseType(product models.Product) ProductResponseType {
+	log.Info("Created ProductResponseType according to Product.")
 	return ProductResponseType{
 		ProductName: product.ProductName,
 		Price:       product.Price.String(),
@@ -41,5 +46,7 @@ func NewProductsResponseType(products []models.Product) []ProductWithCategoryRes
 	for _, product := range products {
 		productsRes = append(productsRes, NewProductWithCategoryResponseType(product))
 	}
+
+	log.Info("Created ProductWithCategoryResponseType slice according to product slice.")
 	return productsRes
 }
