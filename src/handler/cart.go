@@ -3,6 +3,7 @@ package handler
 import (
 	"PicusFinalCase/src/handler/requestType"
 	"PicusFinalCase/src/handler/responseType"
+	"PicusFinalCase/src/models"
 	"PicusFinalCase/src/pkg/config"
 	"PicusFinalCase/src/pkg/errorHandler"
 	"PicusFinalCase/src/pkg/middleware"
@@ -20,17 +21,14 @@ func NewCartHandler(r *gin.RouterGroup, config config.JWTConfig, cartService *se
 		cartService: cartService,
 	}
 
-	r.POST("", middleware.AuthMiddleware(config.SecretKey), h.AddToCart)
-	r.GET("", middleware.AuthMiddleware(config.SecretKey), h.ListCartItems)
-	r.PUT("", middleware.AuthMiddleware(config.SecretKey), h.UpdateCartItems)
-	r.DELETE("/:productId", middleware.AuthMiddleware(config.SecretKey), h.DeleteCartItems)
+	r.POST("", middleware.AuthMiddleware(config.SecretKey, models.Customer), h.AddToCart)
+	r.GET("", middleware.AuthMiddleware(config.SecretKey, models.Customer), h.ListCartItems)
+	r.PUT("", middleware.AuthMiddleware(config.SecretKey, models.Customer), h.UpdateCartItems)
+	r.DELETE("/:productId", middleware.AuthMiddleware(config.SecretKey, models.Customer), h.DeleteCartItems)
 }
 
 func (h *CartHandler) AddToCart(c *gin.Context) {
-	userId, ok := c.Get("id")
-	if !ok {
-		errorHandler.Panic(errorHandler.NotAuthorizedError)
-	}
+	userId, _ := c.Get("id")
 	var reqDetail requestType.CartDetailsRequestType
 	if err := c.Bind(&reqDetail); err != nil {
 		errorHandler.Panic(errorHandler.BindError)
@@ -44,20 +42,14 @@ func (h *CartHandler) AddToCart(c *gin.Context) {
 }
 
 func (h *CartHandler) ListCartItems(c *gin.Context) {
-	userId, ok := c.Get("id")
-	if !ok {
-		errorHandler.Panic(errorHandler.NotAuthorizedError)
-	}
+	userId, _ := c.Get("id")
 	res := h.cartService.ListCartItems(userId.(string))
 	cartRes := responseType.NewCartResponseType(*res)
 	c.JSON(http.StatusOK, responseType.NewResponseType(http.StatusOK, cartRes))
 }
 
 func (h CartHandler) UpdateCartItems(c *gin.Context) {
-	userId, ok := c.Get("id")
-	if !ok {
-		errorHandler.Panic(errorHandler.NotAuthorizedError)
-	}
+	userId, _ := c.Get("id")
 	var reqDetail requestType.CartDetailsRequestType
 	if err := c.Bind(&reqDetail); err != nil {
 		errorHandler.Panic(errorHandler.BindError)
@@ -71,10 +63,7 @@ func (h CartHandler) UpdateCartItems(c *gin.Context) {
 }
 
 func (h *CartHandler) DeleteCartItems(c *gin.Context) {
-	userId, ok := c.Get("id")
-	if !ok {
-		errorHandler.Panic(errorHandler.NotAuthorizedError)
-	}
+	userId, _ := c.Get("id")
 	productId := c.Param("productId")
 	h.cartService.DeleteCartDetail(userId.(string), productId)
 	c.JSON(http.StatusOK, responseType.NewResponseType(http.StatusOK, true))

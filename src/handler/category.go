@@ -17,19 +17,12 @@ type CategoryHandler struct {
 
 func NewCategoryHandler(r *gin.RouterGroup, config config.JWTConfig, categoryService *service.CategoryService) {
 	h := &CategoryHandler{service: categoryService}
-	//r.POST("/", h.createCategories)
-	r.POST("/", middleware.AuthMiddleware(config.SecretKey), h.createCategories)
+
+	r.POST("/", middleware.AuthMiddleware(config.SecretKey, models.Admin), h.createCategories)
 	r.GET("/", h.FindCategories)
 }
 
 func (h *CategoryHandler) createCategories(c *gin.Context) {
-	userRole, ok := c.Get("role")
-	if !ok {
-		errorHandler.Panic(errorHandler.NotAuthorizedError)
-	}
-	if userRole != models.Admin {
-		errorHandler.Panic(errorHandler.ForbiddenError)
-	}
 	file, _, err := c.Request.FormFile("csvFile")
 	if err != nil {
 		errorHandler.Panic(errorHandler.FormFileError)

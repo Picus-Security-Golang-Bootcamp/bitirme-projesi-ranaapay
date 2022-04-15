@@ -2,6 +2,7 @@ package handler
 
 import (
 	"PicusFinalCase/src/handler/responseType"
+	"PicusFinalCase/src/models"
 	"PicusFinalCase/src/pkg/config"
 	"PicusFinalCase/src/pkg/middleware"
 	"PicusFinalCase/src/service"
@@ -16,8 +17,8 @@ type OrderHandler struct {
 func NewOrderHandler(r *gin.RouterGroup, config config.JWTConfig, orderService *service.OrderService) {
 	h := &OrderHandler{service: orderService}
 
-	r.POST("", middleware.AuthMiddleware(config.SecretKey), h.completeOrder)
-	r.GET("", middleware.AuthMiddleware(config.SecretKey), h.listOrders)
+	r.POST("", middleware.AuthMiddleware(config.SecretKey, models.Customer), h.completeOrder)
+	r.GET("", middleware.AuthMiddleware(config.SecretKey, models.Customer), h.listOrders)
 }
 
 func (h *OrderHandler) completeOrder(c *gin.Context) {
