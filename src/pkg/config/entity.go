@@ -4,7 +4,6 @@ type Config struct {
 	ServerConfig ServerConfig
 	JWTConfig    JWTConfig
 	DBConfig     DBConfig
-	Logger       Logger
 }
 
 type ServerConfig struct {
@@ -29,10 +28,4 @@ type DBConfig struct {
 	Username string
 	Name     string
 	Password string
-}
-
-type Logger struct {
-	Development bool
-	Encoding    string
-	Level       string
 }

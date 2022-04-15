@@ -18,8 +18,3 @@ DBConfig:
   Username: postgres
   Name: picus_basket
   Password: postgres
-
-Logger:
-  Development: true
-  Encoding: json
-  Level: info
