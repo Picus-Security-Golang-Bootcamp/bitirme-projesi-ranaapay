@@ -29,3 +29,12 @@ func (r *OrderRepository) CreateOrder(order models.Order) string {
 	}
 	return order.Id
 }
+
+func (r *OrderRepository) FindUserOrders(userId string) []models.Order {
+	var orders []models.Order
+	result := r.db.Preload("Cart").Where("user_id = ?", userId).Find(&orders)
+	if result.Error != nil {
+		return nil
+	}
+	return orders
+}
