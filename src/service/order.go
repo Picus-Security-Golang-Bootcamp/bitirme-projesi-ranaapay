@@ -84,3 +84,11 @@ func (s *OrderService) updateProduct(cartDetails []models.CartDetails) {
 		}
 	}
 }
+
+func (s *OrderService) ListOrders(userId string) []models.Order {
+	res := s.orderRepo.FindUserOrders(userId)
+	if len(res) == 0 {
+		errorHandler.Panic(errorHandler.NotFoundError)
+	}
+	return res
+}
