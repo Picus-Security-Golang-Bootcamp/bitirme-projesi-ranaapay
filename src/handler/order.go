@@ -19,6 +19,7 @@ func NewOrderHandler(r *gin.RouterGroup, config config.JWTConfig, orderService *
 
 	r.POST("", middleware.AuthMiddleware(config.SecretKey, models.Customer), h.completeOrder)
 	r.GET("", middleware.AuthMiddleware(config.SecretKey, models.Customer), h.listOrders)
+	r.DELETE("/:id", middleware.AuthMiddleware(config.SecretKey, models.Customer), h.cancelOrder)
 }
 
 func (h *OrderHandler) completeOrder(c *gin.Context) {
@@ -31,4 +32,10 @@ func (h *OrderHandler) listOrders(c *gin.Context) {
 	userId, _ := c.Get("id")
 	res := h.service.ListOrders(userId.(string))
 	c.JSON(http.StatusOK, responseType.NewResponseType(http.StatusOK, responseType.NewOrdersResponseType(res)))
+}
+
+func (h *OrderHandler) cancelOrder(c *gin.Context) {
+	orderId := c.Param("id")
+	h.service.CancelOrder(orderId)
+	c.JSON(http.StatusOK, responseType.NewResponseType(http.StatusOK, true))
 }
