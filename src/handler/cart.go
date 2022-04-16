@@ -27,6 +27,19 @@ func NewCartHandler(r *gin.RouterGroup, config config.JWTConfig, cartService *se
 	r.DELETE("/:productId", middleware.AuthMiddleware(config.SecretKey, models.Customer), h.DeleteCartItems)
 }
 
+// AddToCart
+//@Summary       Add Product To Cart
+// @Description  add product to the cart
+// @Tags         carts
+// @Accept       json
+// @Produce      json
+// @Param 	     requestType.CartDetailsRequestType body requestType.CartDetailsRequestType true "For add product to the basket"
+//@Success       201  {object}  responseType.ResponseType
+// @Failure		 400 {object} 	_type.ErrorType
+// @Failure		 500 {object} 	_type.ErrorType
+// @Router       /cart [post]
+// AddToCart Users who are logged into the system and whose
+//token has not expired can add their products to the basket.
 func (h *CartHandler) AddToCart(c *gin.Context) {
 	userId, _ := c.Get("id")
 	var reqDetail requestType.CartDetailsRequestType
@@ -41,6 +54,15 @@ func (h *CartHandler) AddToCart(c *gin.Context) {
 	return
 }
 
+// ListCartItems
+//@Summary       Show cart items
+// @Description  get cart items by userId
+// @Tags         carts
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  responseType.ResponseType
+// @Router       /cart [get]
+// ListCartItems Users list the products they add to their cart.
 func (h *CartHandler) ListCartItems(c *gin.Context) {
 	userId, _ := c.Get("id")
 	res := h.cartService.ListCartItems(userId.(string))
@@ -48,6 +70,18 @@ func (h *CartHandler) ListCartItems(c *gin.Context) {
 	c.JSON(http.StatusOK, responseType.NewResponseType(http.StatusOK, cartRes))
 }
 
+// UpdateCartItems
+//@Summary       Update CartItems
+// @Description  Update user carts cartItems in database
+// @Tags         carts
+// @Accept       json
+// @Produce      json
+// @Param 	     requestType.CartDetailsRequestType body requestType.CartDetailsRequestType true "For update a cart item"
+//@Success       200  {object}  responseType.ResponseType
+// @Failure		 400 {object} 	_type.ErrorType
+// @Failure		 500 {object} 	_type.ErrorType
+// @Router       /cart [put]
+// UpdateCartItems Users update the quantity of products added to their cart.
 func (h CartHandler) UpdateCartItems(c *gin.Context) {
 	userId, _ := c.Get("id")
 	var reqDetail requestType.CartDetailsRequestType
@@ -62,6 +96,19 @@ func (h CartHandler) UpdateCartItems(c *gin.Context) {
 	return
 }
 
+// DeleteCartItems
+//@Summary       Delete a cart item
+// @Description  delete cart item by productId
+// @Tags         carts
+// @Accept       json
+// @Produce      json
+// @Param        productId   path      string  true  "Product ID"
+// @Success      200 {object}   responseType.ResponseType
+//@Failure       400  {object}  _type.ErrorType
+// @Failure		 500 {object} 	_type.ErrorType
+// @Router       /cart/{productId} [delete]
+//Users in the admin role delete products
+// DeleteCartItems Users delete products added to their cart.
 func (h *CartHandler) DeleteCartItems(c *gin.Context) {
 	userId, _ := c.Get("id")
 	productId := c.Param("productId")

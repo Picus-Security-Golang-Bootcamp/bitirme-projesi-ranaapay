@@ -30,6 +30,18 @@ func NewProductHandler(r *gin.RouterGroup, config config.JWTConfig, productServi
 	r.PUT("/:id", middleware.AuthMiddleware(config.SecretKey, models.Admin), h.updateProducts)
 }
 
+// findProductById
+//@Summary       Show a product
+// @Description  get product by ID
+// @Tags         products
+// @Accept       json
+// @Produce      json
+// @Param        id   path      string  true  "Product ID"
+// @Success      200  {object}  responseType.ResponseType
+// @Failure		 404 {object} 	_type.ErrorType
+// @Failure		 400 {object} 	_type.ErrorType
+// @Router       /product/{id} [get]
+//Returns the product based on the productId.
 func (h *ProductHandler) findProductById(c *gin.Context) {
 	pId := c.Param("id")
 	res := h.productService.FindByProductId(pId)
@@ -37,6 +49,26 @@ func (h *ProductHandler) findProductById(c *gin.Context) {
 	c.JSON(http.StatusOK, responseType.NewResponseType(http.StatusOK, prodRes))
 }
 
+// listProducts
+// @Summary      List products
+// @Description  get products
+// @Tags         products
+// @Accept       json
+// @Produce      json
+// @Param        sort query string false "sort"
+// @Param        page query int false "page"
+// @Param        pageSize query int false "page"
+// @Param		 product_name query string false "product_name"
+// @Param		 category_id query string false "category_id"
+// @Param		 price query int false "price"
+// @Param		 stock_number query int false "stock_number"
+// @Param		 units_on_cart query int false "units_on_cart"
+// @Success      200  {object}  responseType.ResponseType
+// @Failure		 404 {object} 	_type.ErrorType
+// @Failure		 400 {object} 	_type.ErrorType
+// @Router       /product 	[get]
+//Users can list products without the need for role control. They can
+//search according to the parameters they entered.
 func (h *ProductHandler) listProducts(c *gin.Context) {
 	reqQueries := c.Request.URL.Query()
 	sortOpt, pageNum, pageSize := helper.SetPaginationOptions(&reqQueries)
@@ -64,6 +96,18 @@ func (h *ProductHandler) createProducts(c *gin.Context) {
 	return
 }
 
+// deleteProducts
+//@Summary       Delete a product
+// @Description  delete product by ID
+// @Tags         products
+// @Accept       json
+// @Produce      json
+// @Param        id   path      string  true  "Product ID"
+// @Success      200 {object}   responseType.ResponseType
+//@Failure       400  {object}  _type.ErrorType
+// @Failure		 404 {object} 	_type.ErrorType
+// @Router       /product/{id} [delete]
+//Users in the admin role delete products
 func (h *ProductHandler) deleteProducts(c *gin.Context) {
 	id := c.Param("id")
 	h.productService.DeleteProduct(id)
@@ -71,6 +115,19 @@ func (h *ProductHandler) deleteProducts(c *gin.Context) {
 	return
 }
 
+// updateProducts
+//@Summary       Update Product
+// @Description  Update product in database
+// @Tags         products
+// @Accept       json
+// @Produce      json
+// @Param        id   path      string  true  "Product ID"
+// @Param 	     requestType.ProductRequestType body requestType.ProductRequestType true "For update a Product"
+//@Success       200  {object}  responseType.ResponseType
+// @Failure		 400 {object} 	_type.ErrorType
+// @Failure		 500 {object} 	_type.ErrorType
+// @Router       /product/{id} [put]
+//Users in the admin role update products
 func (h *ProductHandler) updateProducts(c *gin.Context) {
 	reqId := c.Param("id")
 	var reqProduct requestType.ProductRequestType

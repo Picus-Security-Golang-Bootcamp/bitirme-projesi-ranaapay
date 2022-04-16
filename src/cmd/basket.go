@@ -39,6 +39,9 @@ func Execute() {
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
 
+	SwaggerSettings(cfg.ServerConfig)
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+
 	srv := &http.Server{
 		Addr:         fmt.Sprintf("127.0.0.1:%s", cfg.ServerConfig.Port),
 		Handler:      r,
@@ -78,4 +81,13 @@ func Execute() {
 	if err = srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		log.Fatalf("listen: %s\n", err)
 	}
+}
+
+func SwaggerSettings(cfg config.ServerConfig) {
+	docs.SwaggerInfo.Title = "Basket Application"
+	docs.SwaggerInfo.Version = "1.0"
+	docs.SwaggerInfo.Description = "Basket Service"
+	docs.SwaggerInfo.BasePath = cfg.RoutePrefix
+	docs.SwaggerInfo.Host = fmt.Sprintf("localhost:%s", cfg.Port)
+	docs.SwaggerInfo.Schemes = []string{"http"}
 }

@@ -1,0 +1,516 @@
+definitions:
+  _type.ErrorType:
+    properties:
+      errCode:
+        type: integer
+      errMessage:
+        type: string
+    type: object
+  requestType.CartDetailsRequestType:
+    properties:
+      productId:
+        type: string
+      productQuantity:
+        type: integer
+    type: object
+  requestType.LoginType:
+    properties:
+      firstName:
+        type: string
+      password:
+        type: string
+    type: object
+  requestType.ProductRequestType:
+    properties:
+      categoryId:
+        type: string
+      price:
+        type: number
+      productName:
+        type: string
+      stockNumber:
+        type: integer
+      unitsOnCart:
+        type: integer
+    type: object
+  requestType.UserRequestType:
+    properties:
+      email:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      password:
+        type: string
+    type: object
+  responseType.ResponseType:
+    properties:
+      code:
+        type: integer
+      message: {}
+    type: object
+info:
+  contact: {}
+paths:
+  /authentication/create:
+    post:
+      consumes:
+      - application/json
+      description: create user in database
+      parameters:
+      - description: For create a User
+        in: body
+        name: requestType.UserRequestType
+        required: true
+        schema:
+          $ref: '#/definitions/requestType.UserRequestType'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/responseType.ResponseType'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/_type.ErrorType'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/_type.ErrorType'
+      summary: Create User
+      tags:
+      - authentication
+  /authentication/login:
+    post:
+      consumes:
+      - application/json
+      description: login user for app
+      parameters:
+      - description: For login
+        in: body
+        name: LoginRequestType
+        required: true
+        schema:
+          $ref: '#/definitions/requestType.LoginType'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseType.ResponseType'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/_type.ErrorType'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/_type.ErrorType'
+      summary: Login User
+      tags:
+      - authentication
+  /cart:
+    get:
+      consumes:
+      - application/json
+      description: get cart items by userId
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseType.ResponseType'
+      summary: Show cart items
+      tags:
+      - carts
+    post:
+      consumes:
+      - application/json
+      description: add product to the cart
+      parameters:
+      - description: For add product to the basket
+        in: body
+        name: requestType.CartDetailsRequestType
+        required: true
+        schema:
+          $ref: '#/definitions/requestType.CartDetailsRequestType'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/responseType.ResponseType'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/_type.ErrorType'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/_type.ErrorType'
+      summary: Add Product To Cart
+      tags:
+      - carts
+    put:
+      consumes:
+      - application/json
+      description: Update user carts cartItems in database
+      parameters:
+      - description: For update a cart item
+        in: body
+        name: requestType.CartDetailsRequestType
+        required: true
+        schema:
+          $ref: '#/definitions/requestType.CartDetailsRequestType'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseType.ResponseType'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/_type.ErrorType'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/_type.ErrorType'
+      summary: Update CartItems
+      tags:
+      - carts
+  /cart/{productId}:
+    delete:
+      consumes:
+      - application/json
+      description: delete cart item by productId
+      parameters:
+      - description: Product ID
+        in: path
+        name: productId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseType.ResponseType'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/_type.ErrorType'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/_type.ErrorType'
+      summary: Delete a cart item
+      tags:
+      - carts
+  /category:
+    get:
+      consumes:
+      - application/json
+      description: gets all categories in database
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseType.ResponseType'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/_type.ErrorType'
+      summary: List Categories
+      tags:
+      - category
+    post:
+      consumes:
+      - multipart/form-data
+      description: admin can create categories by uploading csv file
+      parameters:
+      - description: Authentication header
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: category list
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseType.ResponseType'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/_type.ErrorType'
+      summary: Create Categories
+      tags:
+      - category
+  /order:
+    get:
+      consumes:
+      - application/json
+      description: get users orders
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseType.ResponseType'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/_type.ErrorType'
+      summary: List Orders
+      tags:
+      - orders
+    post:
+      consumes:
+      - application/json
+      description: create order in database according to users cart
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/responseType.ResponseType'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/_type.ErrorType'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/_type.ErrorType'
+      summary: Create Order
+      tags:
+      - orders
+  /order/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: cancel user's order if order created has not passed 14 days
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseType.ResponseType'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/_type.ErrorType'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/_type.ErrorType'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/_type.ErrorType'
+      summary: Cancel Order
+      tags:
+      - orders
+  /product:
+    get:
+      consumes:
+      - application/json
+      description: get products
+      parameters:
+      - description: sort
+        in: query
+        name: sort
+        type: string
+      - description: page
+        in: query
+        name: page
+        type: integer
+      - description: page
+        in: query
+        name: pageSize
+        type: integer
+      - description: product_name
+        in: query
+        name: product_name
+        type: string
+      - description: category_id
+        in: query
+        name: category_id
+        type: string
+      - description: price
+        in: query
+        name: price
+        type: integer
+      - description: stock_number
+        in: query
+        name: stock_number
+        type: integer
+      - description: units_on_cart
+        in: query
+        name: units_on_cart
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseType.ResponseType'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/_type.ErrorType'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/_type.ErrorType'
+      summary: List products
+      tags:
+      - products
+    post:
+      consumes:
+      - application/json
+      description: create product in database
+      parameters:
+      - description: For create a Product
+        in: body
+        name: requestType.ProductRequestType
+        required: true
+        schema:
+          $ref: '#/definitions/requestType.ProductRequestType'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/responseType.ResponseType'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/_type.ErrorType'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/_type.ErrorType'
+      summary: Create Product
+      tags:
+      - products
+  /product/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete product by ID
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseType.ResponseType'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/_type.ErrorType'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/_type.ErrorType'
+      summary: Delete a product
+      tags:
+      - products
+    get:
+      consumes:
+      - application/json
+      description: get product by ID
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseType.ResponseType'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/_type.ErrorType'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/_type.ErrorType'
+      summary: Show a product
+      tags:
+      - products
+    put:
+      consumes:
+      - application/json
+      description: Update product in database
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: For update a Product
+        in: body
+        name: requestType.ProductRequestType
+        required: true
+        schema:
+          $ref: '#/definitions/requestType.ProductRequestType'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseType.ResponseType'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/_type.ErrorType'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/_type.ErrorType'
+      summary: Update Product
+      tags:
+      - products
+swagger: "2.0"

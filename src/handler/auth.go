@@ -20,6 +20,19 @@ func NewAuthHandler(r *gin.RouterGroup, authService *service.AuthService) {
 	r.POST("/login", h.loginUser)
 }
 
+// createUser
+//@Summary       Create User
+// @Description  create user in database
+// @Tags         authentication
+// @Accept       json
+// @Produce      json
+// @Param 	     requestType.UserRequestType body requestType.UserRequestType true "For create a User"
+//@Success       201  {object}  responseType.ResponseType
+// @Failure		 400 {object} 	_type.ErrorType
+// @Failure		 500 {object} 	_type.ErrorType
+// @Router       /authentication/create [post]
+//Creates a user in the database by obtaining the necessary
+//information from the user and JWT token is returned in response.
 func (h *AuthHandler) createUser(c *gin.Context) {
 	var userReq requestType.UserRequestType
 	if err := c.Bind(&userReq); err != nil {
@@ -32,6 +45,19 @@ func (h *AuthHandler) createUser(c *gin.Context) {
 	return
 }
 
+// loginUser
+//@Summary       Login User
+// @Description  login user for app
+// @Tags         authentication
+// @Accept       json
+// @Produce      json
+// @Param 	     LoginRequestType body requestType.LoginType true "For login"
+//@Success       200  {object}  responseType.ResponseType
+// @Failure		 400 {object} 	_type.ErrorType
+// @Failure		 500 {object} 	_type.ErrorType
+// @Router       /authentication/login [post]
+//Users registered in the database log into the system with firstname and password.
+//If both information is correct, JWT token is returned.
 func (h *AuthHandler) loginUser(c *gin.Context) {
 	var userLogin requestType.LoginType
 	if err := c.Bind(&userLogin); err != nil {
