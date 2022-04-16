@@ -20,24 +20,28 @@ func NewAuthRepository(db *gorm.DB) *AuthRepository {
 	return &authRepo
 }
 
-// CreateUser Creates a user in the database.
+// CreateUser Creates a user in the database. Returns user.
 func (r *AuthRepository) CreateUser(user models.User) *models.User {
+
 	result := r.db.Create(&user)
 	if result.Error != nil {
 		log.Errorf("Create User Error : %s", result.Error.Error())
 		return nil
 	}
+
 	return &user
 }
 
-// FindUser Finds the user based on the entered name parameter.
+// FindUser Finds the user based on the entered name parameter. Returns user.
 func (r *AuthRepository) FindUser(name string) *models.User {
 	var user models.User
+
 	result := r.db.Where(&models.User{FirstName: name}).First(&user)
 	if result.Error != nil {
 		log.Errorf("Find User Error : %s", result.Error.Error())
 		return nil
 	}
+
 	return &user
 }
 
