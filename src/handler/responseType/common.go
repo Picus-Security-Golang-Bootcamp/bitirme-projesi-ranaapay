@@ -8,6 +8,7 @@ type ResponseType struct {
 }
 
 func NewResponseType(code int, message interface{}) *ResponseType {
+	log.Info("Created NewResponseType.")
 	return &ResponseType{
 		Code:    code,
 		Message: message,

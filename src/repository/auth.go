@@ -3,7 +3,7 @@ package repository
 import (
 	models "PicusFinalCase/src/models"
 	"PicusFinalCase/src/pkg/errorHandler"
-	"errors"
+	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )
 
@@ -13,23 +13,29 @@ type AuthRepository struct {
 
 func NewAuthRepository(db *gorm.DB) *AuthRepository {
 	authRepo := AuthRepository{db: db}
+
 	authRepo.migrations()
 	authRepo.insertSampleAdminData()
+
 	return &authRepo
 }
 
+// CreateUser Creates a user in the database.
 func (r *AuthRepository) CreateUser(user models.User) *models.User {
 	result := r.db.Create(&user)
 	if result.Error != nil {
+		log.Errorf("Create User Error : %s", result.Error.Error())
 		return nil
 	}
 	return &user
 }
 
+// FindUser Finds the user based on the entered name parameter.
 func (r *AuthRepository) FindUser(name string) *models.User {
 	var user models.User
 	result := r.db.Where(&models.User{FirstName: name}).First(&user)
 	if result.Error != nil {
+		log.Errorf("Find User Error : %s", result.Error.Error())
 		return nil
 	}
 	return &user
@@ -37,10 +43,12 @@ func (r *AuthRepository) FindUser(name string) *models.User {
 
 func (r *AuthRepository) migrations() {
 	if err := r.db.AutoMigrate(&models.User{}); err != nil {
+		log.Errorf("User Migration Error : %v", err)
 		errorHandler.Panic(errorHandler.DBMigrateError)
 	}
 }
 
+//A statically maintained admin is created in the database.
 func (r *AuthRepository) insertSampleAdminData() {
 	user := models.User{
 		FirstName: "admin",
@@ -51,4 +59,5 @@ func (r *AuthRepository) insertSampleAdminData() {
 	}
 	user.HashPassword()
 	r.db.Create(&user)
+	log.Info("Admin user created in database.")
 }

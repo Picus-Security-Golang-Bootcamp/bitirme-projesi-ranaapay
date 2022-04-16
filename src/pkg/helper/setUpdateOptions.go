@@ -1,6 +1,9 @@
 package helper
 
-import "PicusFinalCase/src/models"
+import (
+	"PicusFinalCase/src/models"
+	log "github.com/sirupsen/logrus"
+)
 
 const (
 	ProductNameVar = "product_name"
@@ -11,7 +14,9 @@ const (
 	UpdatedAtVar   = "updated_at"
 )
 
+// SetProductUpdateOptions It creates the necessary map to update the product according to the incoming product model.
 func SetProductUpdateOptions(product models.Product) map[string]interface{} {
+
 	updateOptions := map[string]interface{}{
 		ProductNameVar: product.GetProductName(),
 		CategoryIdVar:  product.GetProductCategoryId(),
@@ -20,5 +25,7 @@ func SetProductUpdateOptions(product models.Product) map[string]interface{} {
 		UnitsOnCartVar: product.GetProductUnitsOnCart(),
 		UpdatedAtVar:   product.GetUpdatedAt(),
 	}
+
+	log.Info("Created product update options.")
 	return updateOptions
 }

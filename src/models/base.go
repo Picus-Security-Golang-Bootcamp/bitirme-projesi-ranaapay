@@ -2,6 +2,7 @@ package models
 
 import (
 	"github.com/google/uuid"
+	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 	"time"
 )
@@ -23,8 +24,10 @@ func (b *Base) BeforeCreate(tx *gorm.DB) (err error) {
 }
 
 func (b *Base) GetUpdatedAt() time.Time {
+	log.Info("Get base model updated at field : %v.", b.UpdatedAt)
 	return b.UpdatedAt
 }
 func (b *Base) SetUpdatedAt() {
 	b.UpdatedAt = time.Now()
+	log.Info("Set base model updated at field : %v.", b.UpdatedAt)
 }

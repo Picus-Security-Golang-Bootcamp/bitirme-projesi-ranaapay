@@ -2,6 +2,7 @@ package models
 
 import (
 	"github.com/shopspring/decimal"
+	log "github.com/sirupsen/logrus"
 	"time"
 )
 
@@ -33,24 +34,31 @@ func (Cart) TableName() string {
 
 func (c *Cart) SetUserId(userId string) {
 	c.UserId = userId
+	log.Info("Set Cart UserId field : %s.", c.UserId)
 }
 
 func (c *Cart) SetTotalCartPrice(total decimal.Decimal) {
 	c.TotalCartPrice = total
+	log.Info("Set Cart TotalCartPrice field : %v.", c.TotalCartPrice)
 }
 
 func (c *Cart) SetUpdatedAt() {
 	c.UpdatedAt = time.Now()
+	log.Info("Set Cart UpdatedAt field : %v.", c.UpdatedAt)
 }
 
 func (d *CartDetails) SetDetailTotalPrice(total decimal.Decimal) {
 	d.DetailTotalPrice = total
+	log.Info("Set CartDetails DetailTotalPrice field : %v.", d.DetailTotalPrice)
+
 }
 
 func (d *CartDetails) SetCartId(cartId string) {
 	d.CartId = cartId
+	log.Info("Set CartDetails CartId field : %v.", d.CartId)
 }
 
 func (d *CartDetails) SetUpdatedAt() {
 	d.UpdatedAt = time.Now()
+	log.Info("Set CartDetails UpdatedAt field : %v.", d.UpdatedAt)
 }

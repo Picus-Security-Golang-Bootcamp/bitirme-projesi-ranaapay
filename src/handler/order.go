@@ -34,8 +34,11 @@ func NewOrderHandler(r *gin.RouterGroup, config config.JWTConfig, orderService *
 // @Router       /order [post]
 //Users create an order with the products they add to their cart. Returns orderId.
 func (h *OrderHandler) completeOrder(c *gin.Context) {
+
 	userId, _ := c.Get("id")
+
 	res := h.service.CreateOrder(userId.(string))
+
 	c.JSON(http.StatusCreated, responseType.NewResponseType(http.StatusCreated, res))
 }
 
@@ -50,8 +53,11 @@ func (h *OrderHandler) completeOrder(c *gin.Context) {
 // @Router       /order 	[get]
 //Users view their past orders.
 func (h *OrderHandler) listOrders(c *gin.Context) {
+
 	userId, _ := c.Get("id")
+
 	res := h.service.ListOrders(userId.(string))
+
 	c.JSON(http.StatusOK, responseType.NewResponseType(http.StatusOK, responseType.NewOrdersResponseType(res)))
 }
 
@@ -70,7 +76,10 @@ func (h *OrderHandler) listOrders(c *gin.Context) {
 //If the user's order date has not passed 14 days, the user can cancel the order. If 14 days
 //have passed after the order creation date, the cancellation request will be invalid.
 func (h *OrderHandler) cancelOrder(c *gin.Context) {
+
 	orderId := c.Param("id")
+
 	h.service.CancelOrder(orderId)
+
 	c.JSON(http.StatusOK, responseType.NewResponseType(http.StatusOK, true))
 }

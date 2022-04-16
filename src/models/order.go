@@ -1,5 +1,7 @@
 package models
 
+import log "github.com/sirupsen/logrus"
+
 type Order struct {
 	Base
 	CartId      string `json:"cartId"`
@@ -15,7 +17,9 @@ func (Order) TableName() string {
 
 func (o *Order) SetCartId(id string) {
 	o.CartId = id
+	log.Info("Set Order CartId field : %v.", o.CartId)
 }
 func (o *Order) SetUserId(id string) {
 	o.UserId = id
+	log.Info("Set Order UserId field : %v.", o.UserId)
 }

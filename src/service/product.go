@@ -5,15 +5,18 @@ import (
 	"PicusFinalCase/src/pkg/errorHandler"
 	"PicusFinalCase/src/pkg/helper"
 	"PicusFinalCase/src/repository"
+	log "github.com/sirupsen/logrus"
 )
 
 type ProductService struct {
-	repo *repository.ProductRepository
+	repo    *repository.ProductRepository
+	catRepo *repository.CategoryRepository
 }
 
-func NewProductService(productRepo *repository.ProductRepository) *ProductService {
+func NewProductService(productRepo *repository.ProductRepository, catRepo *repository.CategoryRepository) *ProductService {
 	return &ProductService{
-		repo: productRepo,
+		repo:    productRepo,
+		catRepo: catRepo,
 	}
 }
 
@@ -26,6 +29,15 @@ func (s *ProductService) FindByProductId(id string) *models.Product {
 }
 
 func (s *ProductService) CreateProduct(product models.Product) string {
+
+	//Find the category that its id matches the product CategoryId. If category return
+	//nil throws error.
+	category := s.catRepo.FindCategory(product.CategoryId)
+	if category == nil {
+		log.Error("The request categoryId does not exist in the database.")
+		errorHandler.Panic(errorHandler.CategoryIdNotValidError)
+	}
+
 	productId := s.repo.CreateProduct(product)
 	if productId == "" {
 		errorHandler.Panic(errorHandler.DBCreateError)
@@ -49,6 +61,15 @@ func (s *ProductService) FindProducts(searchFilter map[string]interface{}, sortO
 }
 
 func (s *ProductService) UpdateProduct(product models.Product) models.Product {
+
+	//Find the category that its id matches the product CategoryId. If category return
+	//nil throws error.
+	category := s.catRepo.FindCategory(product.CategoryId)
+	if category == nil {
+		log.Error("The request categoryId does not exist in the database.")
+		errorHandler.Panic(errorHandler.CategoryIdNotValidError)
+	}
+
 	product.SetProductUpdatedAt()
 	updateOptions := helper.SetProductUpdateOptions(product)
 	updatedProduct, err := s.repo.UpdateProduct(product, updateOptions)

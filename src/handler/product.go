@@ -10,18 +10,17 @@ import (
 	"PicusFinalCase/src/pkg/middleware"
 	"PicusFinalCase/src/service"
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 	"net/http"
 )
 
 type ProductHandler struct {
-	productService  *service.ProductService
-	categoryService *service.CategoryService
+	productService *service.ProductService
 }
 
-func NewProductHandler(r *gin.RouterGroup, config config.JWTConfig, productService *service.ProductService, categoryService *service.CategoryService) {
+func NewProductHandler(r *gin.RouterGroup, config config.JWTConfig, productService *service.ProductService) {
 	h := ProductHandler{
-		productService:  productService,
-		categoryService: categoryService,
+		productService: productService,
 	}
 	r.POST("", middleware.AuthMiddleware(config.SecretKey, models.Admin), h.createProducts)
 	r.DELETE("/:id", middleware.AuthMiddleware(config.SecretKey, models.Admin), h.deleteProducts)
@@ -44,7 +43,9 @@ func NewProductHandler(r *gin.RouterGroup, config config.JWTConfig, productServi
 //Returns the product based on the productId.
 func (h *ProductHandler) findProductById(c *gin.Context) {
 	pId := c.Param("id")
+
 	res := h.productService.FindByProductId(pId)
+
 	prodRes := responseType.NewProductResponseType(*res)
 	c.JSON(http.StatusOK, responseType.NewResponseType(http.StatusOK, prodRes))
 }
@@ -70,9 +71,12 @@ func (h *ProductHandler) findProductById(c *gin.Context) {
 //Users can list products without the need for role control. They can
 //search according to the parameters they entered.
 func (h *ProductHandler) listProducts(c *gin.Context) {
+
+	//request parameters are made available for pagination and search.
 	reqQueries := c.Request.URL.Query()
 	sortOpt, pageNum, pageSize := helper.SetPaginationOptions(&reqQueries)
 	searchFilter := helper.SetSearchFilter(reqQueries)
+
 	total, res := h.productService.FindProducts(searchFilter, sortOpt, pageNum, pageSize)
 
 	productsRes := responseType.NewProductsResponseType(res)
@@ -80,18 +84,32 @@ func (h *ProductHandler) listProducts(c *gin.Context) {
 	c.JSON(http.StatusOK, responseType.NewResponseType(http.StatusOK, paginationRes))
 }
 
+// createProducts
+//@Summary       Create Product
+// @Description  create product in database
+// @Tags         products
+// @Accept       json
+// @Produce      json
+// @Param 	     requestType.ProductRequestType body requestType.ProductRequestType true "For create a Product"
+//@Success       201  {object}  responseType.ResponseType
+// @Failure		 400 {object} 	_type.ErrorType
+// @Failure		 500 {object} 	_type.ErrorType
+// @Router       /product [post]
+//Users in the admin role create individual products for the database.
 func (h *ProductHandler) createProducts(c *gin.Context) {
+
 	var reqProduct requestType.ProductRequestType
 	if err := c.Bind(&reqProduct); err != nil {
+		log.Error("Bind error : %s", err.Error())
 		errorHandler.Panic(errorHandler.BindError)
 	}
+
 	reqProduct.ValidateProductRequest()
-	category := h.categoryService.FindCategory(reqProduct.CategoryId)
-	if category == nil {
-		errorHandler.Panic(errorHandler.CategoryIdNotValidError)
-	}
+
 	product := reqProduct.RequestToProductType()
+
 	resId := h.productService.CreateProduct(product)
+
 	c.JSON(http.StatusCreated, responseType.NewResponseType(http.StatusCreated, resId))
 	return
 }
@@ -109,8 +127,11 @@ func (h *ProductHandler) createProducts(c *gin.Context) {
 // @Router       /product/{id} [delete]
 //Users in the admin role delete products
 func (h *ProductHandler) deleteProducts(c *gin.Context) {
+
 	id := c.Param("id")
+
 	h.productService.DeleteProduct(id)
+
 	c.JSON(http.StatusOK, responseType.NewResponseType(http.StatusOK, true))
 	return
 }
@@ -129,19 +150,22 @@ func (h *ProductHandler) deleteProducts(c *gin.Context) {
 // @Router       /product/{id} [put]
 //Users in the admin role update products
 func (h *ProductHandler) updateProducts(c *gin.Context) {
+
 	reqId := c.Param("id")
+
 	var reqProduct requestType.ProductRequestType
 	if err := c.Bind(&reqProduct); err != nil {
+		log.Error("Bind error : %s", err.Error())
 		errorHandler.Panic(errorHandler.BindError)
 	}
+
 	reqProduct.ValidateProductRequest()
-	category := h.categoryService.FindCategory(reqProduct.CategoryId)
-	if category == nil {
-		errorHandler.Panic(errorHandler.CategoryIdNotValidError)
-	}
+
 	product := reqProduct.RequestToProductType()
 	product.SetProductId(reqId)
+
 	res := h.productService.UpdateProduct(product)
+
 	productRes := responseType.NewProductResponseType(res)
 	c.JSON(http.StatusOK, responseType.NewResponseType(http.StatusOK, productRes))
 	return
