@@ -9,6 +9,7 @@ import (
 	"PicusFinalCase/src/pkg/middleware"
 	"PicusFinalCase/src/service"
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 	"net/http"
 )
 
@@ -41,14 +42,21 @@ func NewCartHandler(r *gin.RouterGroup, config config.JWTConfig, cartService *se
 // AddToCart Users who are logged into the system and whose
 //token has not expired can add their products to the basket.
 func (h *CartHandler) AddToCart(c *gin.Context) {
+
+	//The userId value set in the auth middleware is taken.
 	userId, _ := c.Get("id")
+
 	var reqDetail requestType.CartDetailsRequestType
 	if err := c.Bind(&reqDetail); err != nil {
+		log.Error("Bind error : %s", err.Error())
 		errorHandler.Panic(errorHandler.BindError)
 	}
+
 	reqDetail.ValidateCartDetailsRequest()
+
 	cartDetail := reqDetail.RequestToDetailType()
 	res := h.cartService.AddToCart(userId.(string), cartDetail)
+
 	detailRes := responseType.NewCartDetailResponseType(*res)
 	c.JSON(http.StatusCreated, responseType.NewResponseType(http.StatusCreated, detailRes))
 	return
@@ -65,7 +73,9 @@ func (h *CartHandler) AddToCart(c *gin.Context) {
 // ListCartItems Users list the products they add to their cart.
 func (h *CartHandler) ListCartItems(c *gin.Context) {
 	userId, _ := c.Get("id")
+
 	res := h.cartService.ListCartItems(userId.(string))
+
 	cartRes := responseType.NewCartResponseType(*res)
 	c.JSON(http.StatusOK, responseType.NewResponseType(http.StatusOK, cartRes))
 }
@@ -83,14 +93,20 @@ func (h *CartHandler) ListCartItems(c *gin.Context) {
 // @Router       /cart [put]
 // UpdateCartItems Users update the quantity of products added to their cart.
 func (h CartHandler) UpdateCartItems(c *gin.Context) {
+	//The userId value set in the auth middleware is taken.
 	userId, _ := c.Get("id")
+
 	var reqDetail requestType.CartDetailsRequestType
 	if err := c.Bind(&reqDetail); err != nil {
+		log.Error("Bind error : %s", err.Error())
 		errorHandler.Panic(errorHandler.BindError)
 	}
+
 	reqDetail.ValidateCartDetailsRequest()
+
 	cartDetail := reqDetail.RequestToDetailType()
 	res := h.cartService.UpdateCartDetail(userId.(string), cartDetail)
+
 	detailRes := responseType.NewCartDetailResponseType(*res)
 	c.JSON(http.StatusOK, responseType.NewResponseType(http.StatusOK, detailRes))
 	return
@@ -112,7 +128,9 @@ func (h CartHandler) UpdateCartItems(c *gin.Context) {
 func (h *CartHandler) DeleteCartItems(c *gin.Context) {
 	userId, _ := c.Get("id")
 	productId := c.Param("productId")
+
 	h.cartService.DeleteCartDetail(userId.(string), productId)
+
 	c.JSON(http.StatusOK, responseType.NewResponseType(http.StatusOK, true))
 	return
 }
