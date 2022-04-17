@@ -17,7 +17,7 @@ type AuthHandler struct {
 func NewAuthHandler(r *gin.RouterGroup, authService *service.AuthService) {
 	h := &AuthHandler{service: authService}
 
-	r.POST("/create", h.createUser)
+	r.POST("/register", h.createUser)
 	r.POST("/login", h.loginUser)
 }
 
@@ -31,7 +31,7 @@ func NewAuthHandler(r *gin.RouterGroup, authService *service.AuthService) {
 //@Success       201  {object}  responseType.ResponseType
 // @Failure		 400 {object} 	_type.ErrorType
 // @Failure		 500 {object} 	_type.ErrorType
-// @Router       /authentication/create [post]
+// @Router       /authentication/register [post]
 //Creates a user in the database by obtaining the necessary
 //information from the user and JWT token is returned in response.
 func (h *AuthHandler) createUser(c *gin.Context) {
