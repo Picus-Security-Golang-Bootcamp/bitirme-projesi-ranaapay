@@ -4,6 +4,7 @@ import (
 	"PicusFinalCase/src/handler"
 	"PicusFinalCase/src/pkg/config"
 	"PicusFinalCase/src/pkg/db"
+	"PicusFinalCase/src/pkg/graceful"
 	"PicusFinalCase/src/pkg/middleware"
 	"PicusFinalCase/src/repository"
 	"PicusFinalCase/src/service"
@@ -65,8 +66,8 @@ func Execute() {
 
 	productRouter := rootRouter.Group("/product")
 	productRepo := repository.NewProductRepository(db)
-	productService := service.NewProductService(productRepo)
-	handler.NewProductHandler(productRouter, cfg.JWTConfig, productService, categoryService)
+	productService := service.NewProductService(productRepo, categoryRepo)
+	handler.NewProductHandler(productRouter, cfg.JWTConfig, productService)
 
 	cartRouter := rootRouter.Group("/cart")
 	cartRepo := repository.NewCartRepository(db)
@@ -78,9 +79,13 @@ func Execute() {
 	orderService := service.NewOrderService(orderRepo, productRepo, cartRepo)
 	handler.NewOrderHandler(orderRouter, cfg.JWTConfig, orderService)
 
-	if err = srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-		log.Fatalf("listen: %s\n", err)
-	}
+	go func() {
+		if err = srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("listen: %s\n", err)
+		}
+	}()
+
+	graceful.ShutdownGin(srv, time.Duration(cfg.ServerConfig.TimeoutSecs*int64(time.Second)))
 }
 
 func SwaggerSettings(cfg config.ServerConfig) {
