@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"PicusFinalCase/src/docs"
 	"PicusFinalCase/src/handler"
 	"PicusFinalCase/src/pkg/config"
 	"PicusFinalCase/src/pkg/db"
@@ -11,6 +12,8 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
+	swaggerfiles "github.com/swaggo/files" // swagger embed files
+	"github.com/swaggo/gin-swagger"        // gin-swagger middleware
 	"net/http"
 	"os"
 	"time"

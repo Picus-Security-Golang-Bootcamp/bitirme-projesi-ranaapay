@@ -246,7 +246,7 @@ paths:
         type: string
       - description: category list
         in: formData
-        name: file
+        name: csvFile
         required: true
         type: file
       produces:

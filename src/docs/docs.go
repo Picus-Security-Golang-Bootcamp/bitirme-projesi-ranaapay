@@ -314,7 +314,7 @@ const docTemplate = `{
                     {
                         "type": "file",
                         "description": "category list",
-                        "name": "file",
+                        "name": "csvFile",
                         "in": "formData",
                         "required": true
                     }
