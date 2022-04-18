@@ -39,7 +39,8 @@ func (r *CartRepository) FindUserCart(userId string) *models.Cart {
 	defer r.mux.Unlock()
 
 	var cart models.Cart
-	result := r.db.Preload("CartDetails").Where("user_id = ?", userId).First(&cart)
+	result := r.db.Preload("CartDetails").Where("user_id = ? AND is_completed = ?", userId, false).
+		Where(IsDeletedFilterVar).First(&cart)
 	if result.Error != nil {
 		log.Errorf("Find Cart Error : %s", result.Error.Error())
 		return nil
