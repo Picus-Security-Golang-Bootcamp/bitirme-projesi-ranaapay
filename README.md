@@ -2,13 +2,18 @@
 
 - This API server provides endpoints to create,read,update & delete. 
 
-##API Server technology stack is
+## API Server technology stack is
 
 - Server code: `golang`
 - REST Server: `gin`
-- Database: `PostgreSQL` with `GORM` to migrate
-- ORM: `gorm v2`
-- Unit Testing: `go test` and `testify`
+- Database: `PostgreSQL`
+- ORM: `gorm`
+- Unit Testing: `testing`
+- Log: `logrus`
+- Swagger: `swaggo/swag`
+- Configurations: `viper`
+- JWT: `golang-jwt`
+- For decimal: `shopspring/decimal`
 
 ## To Start API Server
 ```$ git clone https://github.com/Picus-Security-Golang-Bootcamp/bitirme-projesi-ranaapay.git```
@@ -79,7 +84,6 @@ type CartDetails struct {
 type Cart struct {
 	Base
 	UserId         string          `json:"userId"`
-	TotalCartPrice decimal.Decimal `json:"totalCartPrice"`
 	IsCompleted    bool            `json:"isCompleted"`
 	CartDetails    []CartDetails
 }
@@ -88,9 +92,10 @@ type Cart struct {
 ``````
 type Order struct {
 	Base
-	CartId      string `json:"cartId"`
-	UserId      string `json:"userId"`
-	IsCancelled bool   `json:"isCancelled"`
+	CartId      string          `json:"cartId"`
+	UserId      string          `json:"userId"`
+	IsCancelled bool            `json:"isCancelled"`
+	TotalPrice  decimal.Decimal `json:"isCancelled"`
 	Cart        Cart
 }
 ``````
