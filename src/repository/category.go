@@ -19,7 +19,7 @@ func NewCategoryRepository(db *gorm.DB) *CategoryRepository {
 }
 
 // CreateCategories Creates categories in the database. Returns result.
-func (r CategoryRepository) CreateCategories(categories []models.Category) bool {
+func (r *CategoryRepository) CreateCategories(categories []models.Category) bool {
 
 	result := r.db.Create(&categories)
 	if result.Error != nil {
@@ -37,7 +37,7 @@ func (r *CategoryRepository) FindCategories() *[]models.Category {
 	result := r.db.Find(&categories).Where("is_deleted = ?", "false")
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		log.Errorf("Find Categories Error : %s", result.Error.Error())
-		errorHandler.Panic(errorHandler.NotFoundError)
+		return nil
 	}
 
 	return &categories
