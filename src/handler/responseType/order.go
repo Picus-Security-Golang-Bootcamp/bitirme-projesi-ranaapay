@@ -9,6 +9,7 @@ type OrderResponseType struct {
 	CartId      string           `json:"cartId"`
 	UserId      string           `json:"userId"`
 	IsCancelled bool             `json:"isCancelled"`
+	TotalPrice  string           `json:"totalPrice"`
 	Cart        CartResponseType `json:"cartResponseType"`
 }
 
@@ -23,6 +24,7 @@ func NewOrderResponseType(order models.Order) OrderResponseType {
 		CartId:      order.CartId,
 		UserId:      order.UserId,
 		IsCancelled: order.IsCancelled,
+		TotalPrice:  order.TotalPrice.String(),
 		Cart:        NewCartResponseType(order.Cart),
 	}
 }
