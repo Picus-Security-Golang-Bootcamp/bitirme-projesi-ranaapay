@@ -7,6 +7,11 @@ import (
 	"gorm.io/gorm"
 )
 
+type AuthRepo interface {
+	CreateUser(user models.User) *models.User
+	FindUser(name string) *models.User
+}
+
 type AuthRepository struct {
 	db *gorm.DB
 }

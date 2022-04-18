@@ -10,11 +10,11 @@ import (
 )
 
 type AuthService struct {
-	repo *repository.AuthRepository
+	repo repository.AuthRepo
 	cfg  config.JWTConfig
 }
 
-func NewAuthService(cfg config.JWTConfig, repo *repository.AuthRepository) *AuthService {
+func NewAuthService(cfg config.JWTConfig, repo repository.AuthRepo) *AuthService {
 	return &AuthService{
 		repo: repo,
 		cfg:  cfg,
