@@ -44,7 +44,7 @@ func (r *OrderRepository) CreateOrder(order models.Order) string {
 func (r *OrderRepository) FindUserOrders(userId string) []models.Order {
 	var orders []models.Order
 
-	result := r.db.Preload("Cart").Where("user_id = ?", userId).Find(&orders)
+	result := r.db.Preload("Cart.CartDetails").Where("user_id = ?", userId).Find(&orders)
 	if result.Error != nil {
 		log.Errorf("Find Order Error : %s", result.Error.Error())
 		return nil
