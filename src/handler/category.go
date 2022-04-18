@@ -30,7 +30,7 @@ func NewCategoryHandler(r *gin.RouterGroup, config config.JWTConfig, categorySer
 // @Accept       multipart/form-data
 // @Produce      json
 // @Param        Authorization  header    string  true  "Authentication header"
-// @Param        file  formData  file  true  "category list"
+// @Param        csvFile  formData  file  true  "category list"
 // @Success       200  {object}  responseType.ResponseType
 // @Failure		 500 {object} 	_type.ErrorType
 // @Router       /category [post]

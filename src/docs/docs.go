@@ -16,52 +16,6 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/authentication/create": {
-            "post": {
-                "description": "create user in database",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "authentication"
-                ],
-                "summary": "Create User",
-                "parameters": [
-                    {
-                        "description": "For create a User",
-                        "name": "requestType.UserRequestType",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/requestType.UserRequestType"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/responseType.ResponseType"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/_type.ErrorType"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/_type.ErrorType"
-                        }
-                    }
-                }
-            }
-        },
         "/authentication/login": {
             "post": {
                 "description": "login user for app",
@@ -108,6 +62,52 @@ const docTemplate = `{
                 }
             }
         },
+        "/authentication/register": {
+            "post": {
+                "description": "create user in database",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "authentication"
+                ],
+                "summary": "Create User",
+                "parameters": [
+                    {
+                        "description": "For create a User",
+                        "name": "requestType.UserRequestType",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requestType.UserRequestType"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/responseType.ResponseType"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/_type.ErrorType"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/_type.ErrorType"
+                        }
+                    }
+                }
+            }
+        },
         "/cart": {
             "get": {
                 "description": "get cart items by userId",
@@ -121,6 +121,15 @@ const docTemplate = `{
                     "carts"
                 ],
                 "summary": "Show cart items",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authentication header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -143,6 +152,13 @@ const docTemplate = `{
                 ],
                 "summary": "Update CartItems",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authentication header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "description": "For update a cart item",
                         "name": "requestType.CartDetailsRequestType",
@@ -187,6 +203,13 @@ const docTemplate = `{
                 ],
                 "summary": "Add Product To Cart",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authentication header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "description": "For add product to the basket",
                         "name": "requestType.CartDetailsRequestType",
@@ -233,6 +256,13 @@ const docTemplate = `{
                 ],
                 "summary": "Delete a cart item",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authentication header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "type": "string",
                         "description": "Product ID",
@@ -348,6 +378,15 @@ const docTemplate = `{
                     "orders"
                 ],
                 "summary": "List Orders",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authentication header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -375,6 +414,15 @@ const docTemplate = `{
                     "orders"
                 ],
                 "summary": "Create Order",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authentication header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "201": {
                         "description": "Created",
@@ -411,6 +459,13 @@ const docTemplate = `{
                 ],
                 "summary": "Cancel Order",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authentication header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "type": "string",
                         "description": "Order ID",
@@ -545,6 +600,13 @@ const docTemplate = `{
                 "summary": "Create Product",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "Authentication header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "description": "For create a Product",
                         "name": "requestType.ProductRequestType",
                         "in": "body",
@@ -634,6 +696,13 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "description": "Authentication header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
                         "description": "Product ID",
                         "name": "id",
                         "in": "path",
@@ -683,6 +752,13 @@ const docTemplate = `{
                 ],
                 "summary": "Delete a product",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authentication header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "type": "string",
                         "description": "Product ID",

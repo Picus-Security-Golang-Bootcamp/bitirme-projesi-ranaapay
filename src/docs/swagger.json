@@ -4,52 +4,6 @@
         "contact": {}
     },
     "paths": {
-        "/authentication/create": {
-            "post": {
-                "description": "create user in database",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "authentication"
-                ],
-                "summary": "Create User",
-                "parameters": [
-                    {
-                        "description": "For create a User",
-                        "name": "requestType.UserRequestType",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/requestType.UserRequestType"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/responseType.ResponseType"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/_type.ErrorType"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/_type.ErrorType"
-                        }
-                    }
-                }
-            }
-        },
         "/authentication/login": {
             "post": {
                 "description": "login user for app",
@@ -96,6 +50,52 @@
                 }
             }
         },
+        "/authentication/register": {
+            "post": {
+                "description": "create user in database",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "authentication"
+                ],
+                "summary": "Create User",
+                "parameters": [
+                    {
+                        "description": "For create a User",
+                        "name": "requestType.UserRequestType",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requestType.UserRequestType"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/responseType.ResponseType"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/_type.ErrorType"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/_type.ErrorType"
+                        }
+                    }
+                }
+            }
+        },
         "/cart": {
             "get": {
                 "description": "get cart items by userId",
@@ -109,6 +109,15 @@
                     "carts"
                 ],
                 "summary": "Show cart items",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authentication header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -131,6 +140,13 @@
                 ],
                 "summary": "Update CartItems",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authentication header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "description": "For update a cart item",
                         "name": "requestType.CartDetailsRequestType",
@@ -175,6 +191,13 @@
                 ],
                 "summary": "Add Product To Cart",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authentication header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "description": "For add product to the basket",
                         "name": "requestType.CartDetailsRequestType",
@@ -221,6 +244,13 @@
                 ],
                 "summary": "Delete a cart item",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authentication header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "type": "string",
                         "description": "Product ID",
@@ -336,6 +366,15 @@
                     "orders"
                 ],
                 "summary": "List Orders",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authentication header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -363,6 +402,15 @@
                     "orders"
                 ],
                 "summary": "Create Order",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authentication header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "201": {
                         "description": "Created",
@@ -399,6 +447,13 @@
                 ],
                 "summary": "Cancel Order",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authentication header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "type": "string",
                         "description": "Order ID",
@@ -533,6 +588,13 @@
                 "summary": "Create Product",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "Authentication header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "description": "For create a Product",
                         "name": "requestType.ProductRequestType",
                         "in": "body",
@@ -622,6 +684,13 @@
                 "parameters": [
                     {
                         "type": "string",
+                        "description": "Authentication header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
                         "description": "Product ID",
                         "name": "id",
                         "in": "path",
@@ -671,6 +740,13 @@
                 ],
                 "summary": "Delete a product",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authentication header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "type": "string",
                         "description": "Product ID",

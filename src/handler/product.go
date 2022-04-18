@@ -90,6 +90,7 @@ func (h *ProductHandler) listProducts(c *gin.Context) {
 // @Tags         products
 // @Accept       json
 // @Produce      json
+// @Param        Authorization  header    string  true  "Authentication header"
 // @Param 	     requestType.ProductRequestType body requestType.ProductRequestType true "For create a Product"
 //@Success       201  {object}  responseType.ResponseType
 // @Failure		 400 {object} 	_type.ErrorType
@@ -120,6 +121,7 @@ func (h *ProductHandler) createProducts(c *gin.Context) {
 // @Tags         products
 // @Accept       json
 // @Produce      json
+// @Param        Authorization  header    string  true  "Authentication header"
 // @Param        id   path      string  true  "Product ID"
 // @Success      200 {object}   responseType.ResponseType
 //@Failure       400  {object}  _type.ErrorType
@@ -142,6 +144,7 @@ func (h *ProductHandler) deleteProducts(c *gin.Context) {
 // @Tags         products
 // @Accept       json
 // @Produce      json
+// @Param        Authorization  header    string  true  "Authentication header"
 // @Param        id   path      string  true  "Product ID"
 // @Param 	     requestType.ProductRequestType body requestType.ProductRequestType true "For update a Product"
 //@Success       200  {object}  responseType.ResponseType

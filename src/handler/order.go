@@ -27,6 +27,7 @@ func NewOrderHandler(r *gin.RouterGroup, config config.JWTConfig, orderService *
 // @Description  create order in database according to users cart
 // @Tags         orders
 // @Accept       json
+// @Param        Authorization  header    string  true  "Authentication header"
 // @Produce      json
 //@Success       201  {object}  responseType.ResponseType
 // @Failure		 400 {object} 	_type.ErrorType
@@ -47,6 +48,7 @@ func (h *OrderHandler) completeOrder(c *gin.Context) {
 // @Description  get users orders
 // @Tags         orders
 // @Accept       json
+// @Param        Authorization  header    string  true  "Authentication header"
 // @Produce      json
 // @Success      200  {object}  responseType.ResponseType
 // @Failure		 404 {object} 	_type.ErrorType
@@ -67,6 +69,7 @@ func (h *OrderHandler) listOrders(c *gin.Context) {
 // @Tags         orders
 // @Accept       json
 // @Produce      json
+// @Param        Authorization  header    string  true  "Authentication header"
 // @Param        id   path      string  true  "Order ID"
 // @Success      200 {object}   responseType.ResponseType
 //@Failure       400  {object}  _type.ErrorType

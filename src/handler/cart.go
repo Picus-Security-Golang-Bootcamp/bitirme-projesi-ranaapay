@@ -34,6 +34,7 @@ func NewCartHandler(r *gin.RouterGroup, config config.JWTConfig, cartService *se
 // @Tags         carts
 // @Accept       json
 // @Produce      json
+// @Param        Authorization  header    string  true  "Authentication header"
 // @Param 	     requestType.CartDetailsRequestType body requestType.CartDetailsRequestType true "For add product to the basket"
 //@Success       201  {object}  responseType.ResponseType
 // @Failure		 400 {object} 	_type.ErrorType
@@ -68,6 +69,7 @@ func (h *CartHandler) AddToCart(c *gin.Context) {
 // @Tags         carts
 // @Accept       json
 // @Produce      json
+// @Param        Authorization  header    string  true  "Authentication header"
 // @Success      200  {object}  responseType.ResponseType
 // @Router       /cart [get]
 // ListCartItems Users list the products they add to their cart.
@@ -86,6 +88,7 @@ func (h *CartHandler) ListCartItems(c *gin.Context) {
 // @Tags         carts
 // @Accept       json
 // @Produce      json
+// @Param        Authorization  header    string  true  "Authentication header"
 // @Param 	     requestType.CartDetailsRequestType body requestType.CartDetailsRequestType true "For update a cart item"
 //@Success       200  {object}  responseType.ResponseType
 // @Failure		 400 {object} 	_type.ErrorType
@@ -118,6 +121,7 @@ func (h CartHandler) UpdateCartItems(c *gin.Context) {
 // @Tags         carts
 // @Accept       json
 // @Produce      json
+// @Param        Authorization  header    string  true  "Authentication header"
 // @Param        productId   path      string  true  "Product ID"
 // @Success      200 {object}   responseType.ResponseType
 //@Failure       400  {object}  _type.ErrorType
