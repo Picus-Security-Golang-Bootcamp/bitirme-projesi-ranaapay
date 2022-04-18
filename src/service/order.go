@@ -80,7 +80,7 @@ func (s *OrderService) CreateOrder(userId string) string {
 func (s *OrderService) ListOrders(userId string) []models.Order {
 	res := s.orderRepo.FindUserOrders(userId)
 	if len(res) == 0 {
-		log.Error("The order with userId : %s does not exist in the database.", userId)
+		log.Error("The order with userId does not exist in the database.")
 		errorHandler.Panic(errorHandler.NotFoundError)
 	}
 
