@@ -66,11 +66,6 @@ func (s *CartService) AddToCart(userId string, cartDetail *models.CartDetails) *
 		errorHandler.Panic(errorHandler.DBCreateError)
 	}
 
-	//Updating cart price according to request cartDetail.
-	cartTotal := cart.TotalCartPrice.Add(cartDetail.DetailTotalPrice)
-	cart.SetTotalCartPrice(cartTotal)
-	s.updateCart(cart)
-
 	//Updating products unitsOnCart field.
 	product.SetProductUnitsOnCart(int(cartDetail.ProductQuantity))
 	product.SetUpdatedAt()
@@ -132,11 +127,6 @@ func (s *CartService) UpdateCartDetail(userId string, cartDetail *models.CartDet
 		errorHandler.Panic(errorHandler.DBUpdateError)
 	}
 
-	//Updating cart price according to updated cartDetail.
-	cartTotal := cart.TotalCartPrice.Add(existDetailCart.DetailTotalPrice.Neg()).Add(cartDetail.DetailTotalPrice)
-	cart.SetTotalCartPrice(cartTotal)
-	s.updateCart(cart)
-
 	//Calculating and Updating products unitsOnCart field.
 	productUnitsOnCart := product.UnitsOnCart - int(existDetailCart.ProductQuantity) + int(cartDetail.ProductQuantity)
 	product.SetProductUnitsOnCart(productUnitsOnCart)
@@ -166,10 +156,6 @@ func (s *CartService) DeleteCartDetail(userId string, productId string) {
 		log.Error("Something happened when deleting cartDetail.")
 		errorHandler.Panic(errorHandler.DBDeleteError)
 	}
-
-	cartTotal := cart.TotalCartPrice.Add(existDetailCart.DetailTotalPrice.Neg())
-	cart.SetTotalCartPrice(cartTotal)
-	s.updateCart(cart)
 }
 
 //findUserCart Finds user cart according to given id. If cart can not be found creates
@@ -194,20 +180,6 @@ func (s *CartService) createUserCart(id string) *models.Cart {
 	}
 
 	return cart
-}
-
-func (s *CartService) updateCart(cart *models.Cart) {
-	cart.SetUpdatedAt()
-	updateOptions := models.Cart{
-		TotalCartPrice: cart.TotalCartPrice,
-		Base:           models.Base{UpdatedAt: cart.UpdatedAt},
-	}
-
-	rawEffected := s.cartRepo.UpdateUserCart(cart.Id, updateOptions)
-	if rawEffected == 0 {
-		log.Error("Something happened when updating cart.")
-		errorHandler.Panic(errorHandler.DBUpdateError)
-	}
 }
 
 func findIfProductExistInCart(productId string, details []models.CartDetails) *models.CartDetails {

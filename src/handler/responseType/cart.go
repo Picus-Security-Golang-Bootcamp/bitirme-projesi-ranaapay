@@ -12,8 +12,7 @@ type CartDetailResponseType struct {
 }
 
 type CartResponseType struct {
-	TotalCartPrice string `json:"totalCartPrice"`
-	CartDetails    []CartDetailResponseType
+	CartDetails []CartDetailResponseType
 }
 
 func NewCartDetailResponseType(detail models.CartDetails) CartDetailResponseType {
@@ -34,7 +33,6 @@ func NewCartResponseType(cart models.Cart) CartResponseType {
 
 	log.Info("Created CartResponseType according to Cart.")
 	return CartResponseType{
-		TotalCartPrice: cart.TotalCartPrice.String(),
-		CartDetails:    detailsRes,
+		CartDetails: detailsRes,
 	}
 }

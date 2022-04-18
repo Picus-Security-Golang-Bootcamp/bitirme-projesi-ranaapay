@@ -16,10 +16,9 @@ type CartDetails struct {
 
 type Cart struct {
 	Base
-	UserId         string          `json:"userId"`
-	TotalCartPrice decimal.Decimal `json:"totalCartPrice"`
-	IsCompleted    bool            `json:"isCompleted"`
-	CartDetails    []CartDetails
+	UserId      string `json:"userId"`
+	IsCompleted bool   `json:"isCompleted"`
+	CartDetails []CartDetails
 }
 
 func (CartDetails) TableName() string {
@@ -35,11 +34,6 @@ func (Cart) TableName() string {
 func (c *Cart) SetUserId(userId string) {
 	c.UserId = userId
 	log.Info("Set Cart UserId field : %s.", c.UserId)
-}
-
-func (c *Cart) SetTotalCartPrice(total decimal.Decimal) {
-	c.TotalCartPrice = total
-	log.Info("Set Cart TotalCartPrice field : %v.", c.TotalCartPrice)
 }
 
 func (c *Cart) SetUpdatedAt() {
