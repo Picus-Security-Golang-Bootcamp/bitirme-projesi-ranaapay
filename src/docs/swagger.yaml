@@ -53,36 +53,6 @@ definitions:
 info:
   contact: {}
 paths:
-  /authentication/create:
-    post:
-      consumes:
-      - application/json
-      description: create user in database
-      parameters:
-      - description: For create a User
-        in: body
-        name: requestType.UserRequestType
-        required: true
-        schema:
-          $ref: '#/definitions/requestType.UserRequestType'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/responseType.ResponseType'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/_type.ErrorType'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/_type.ErrorType'
-      summary: Create User
-      tags:
-      - authentication
   /authentication/login:
     post:
       consumes:
@@ -113,11 +83,47 @@ paths:
       summary: Login User
       tags:
       - authentication
+  /authentication/register:
+    post:
+      consumes:
+      - application/json
+      description: create user in database
+      parameters:
+      - description: For create a User
+        in: body
+        name: requestType.UserRequestType
+        required: true
+        schema:
+          $ref: '#/definitions/requestType.UserRequestType'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/responseType.ResponseType'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/_type.ErrorType'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/_type.ErrorType'
+      summary: Create User
+      tags:
+      - authentication
   /cart:
     get:
       consumes:
       - application/json
       description: get cart items by userId
+      parameters:
+      - description: Authentication header
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -133,6 +139,11 @@ paths:
       - application/json
       description: add product to the cart
       parameters:
+      - description: Authentication header
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: For add product to the basket
         in: body
         name: requestType.CartDetailsRequestType
@@ -162,6 +173,11 @@ paths:
       - application/json
       description: Update user carts cartItems in database
       parameters:
+      - description: Authentication header
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: For update a cart item
         in: body
         name: requestType.CartDetailsRequestType
@@ -192,6 +208,11 @@ paths:
       - application/json
       description: delete cart item by productId
       parameters:
+      - description: Authentication header
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: Product ID
         in: path
         name: productId
@@ -268,6 +289,12 @@ paths:
       consumes:
       - application/json
       description: get users orders
+      parameters:
+      - description: Authentication header
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -286,6 +313,12 @@ paths:
       consumes:
       - application/json
       description: create order in database according to users cart
+      parameters:
+      - description: Authentication header
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -310,6 +343,11 @@ paths:
       - application/json
       description: cancel user's order if order created has not passed 14 days
       parameters:
+      - description: Authentication header
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: Order ID
         in: path
         name: id
@@ -398,6 +436,11 @@ paths:
       - application/json
       description: create product in database
       parameters:
+      - description: Authentication header
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: For create a Product
         in: body
         name: requestType.ProductRequestType
@@ -428,6 +471,11 @@ paths:
       - application/json
       description: delete product by ID
       parameters:
+      - description: Authentication header
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: Product ID
         in: path
         name: id
@@ -484,6 +532,11 @@ paths:
       - application/json
       description: Update product in database
       parameters:
+      - description: Authentication header
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: Product ID
         in: path
         name: id
