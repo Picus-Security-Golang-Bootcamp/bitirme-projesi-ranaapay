@@ -8,14 +8,20 @@ import (
 	"gorm.io/gorm"
 )
 
+type CategoryRepo interface {
+	CreateCategories(categories []models.Category) bool
+	FindCategories() *[]models.Category
+	FindCategory(id string) *models.Category
+}
+
 type CategoryRepository struct {
 	db *gorm.DB
 }
 
-func NewCategoryRepository(db *gorm.DB) *CategoryRepository {
+func NewCategoryRepository(db *gorm.DB) CategoryRepository {
 	categoryRepo := CategoryRepository{db: db}
 	categoryRepo.migrations()
-	return &categoryRepo
+	return categoryRepo
 }
 
 // CreateCategories Creates categories in the database. Returns result.
