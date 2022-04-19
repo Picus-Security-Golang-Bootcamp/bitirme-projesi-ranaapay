@@ -64,12 +64,12 @@ func Execute() {
 
 	categoryRouter := rootRouter.Group("/category")
 	categoryRepo := repository.NewCategoryRepository(db)
-	categoryService := service.NewCategoryService(categoryRepo)
+	categoryService := service.NewCategoryService(&categoryRepo)
 	handler.NewCategoryHandler(categoryRouter, cfg.JWTConfig, categoryService)
 
 	productRouter := rootRouter.Group("/product")
 	productRepo := repository.NewProductRepository(db)
-	productService := service.NewProductService(productRepo, categoryRepo)
+	productService := service.NewProductService(productRepo, &categoryRepo)
 	handler.NewProductHandler(productRouter, cfg.JWTConfig, productService)
 
 	cartRouter := rootRouter.Group("/cart")
