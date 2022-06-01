@@ -1,20 +1,85 @@
-ServerConfig:
-  AppVersion: 1.0.0
-  Mode: Development
-  RoutePrefix: /api/v1/basket
-  Debug: false
-  Port: 8080
-  TimeoutSecs: 60
-  ReadTimeoutSecs: 60
-  WriteTimeoutSecs: 12
+DomainConfig :
+  authentication:
+    ServerConfig :
+        AppVersion: 1.0.0
+        Mode: Development
+        RoutePrefix: /api/v1
+        Debug: false
+        Port: 8080
+        TimeoutSecs: 60
+        ReadTimeoutSecs: 60
+        WriteTimeoutSecs: 12
+    DBConfig :
+      Host: localhost
+      Port: 5432
+      Username: postgres
+      Name: picus_basket
+      Password: postgres
+  category :
+    ServerConfig :
+      AppVersion: 1.0.0
+      Mode: Development
+      RoutePrefix: /api/v1/
+      Debug: false
+      Port: 8081
+      TimeoutSecs: 60
+      ReadTimeoutSecs: 60
+      WriteTimeoutSecs: 12
+    DBConfig :
+      Host: localhost
+      Port: 5432
+      Username: postgres
+      Name: picus_basket
+      Password: postgres
+  product :
+    ServerConfig :
+      AppVersion: 1.0.0
+      Mode: Development
+      RoutePrefix: /api/v1/basket
+      Debug: false
+      Port: 8082
+      TimeoutSecs: 60
+      ReadTimeoutSecs: 60
+      WriteTimeoutSecs: 12
+    DBConfig :
+      Host: localhost
+      Port: 5432
+      Username: postgres
+      Name: picus_basket
+      Password: postgres
+  cart :
+    ServerConfig :
+      AppVersion: 1.0.0
+      Mode: Development
+      RoutePrefix: /api/v1/basket
+      Debug: false
+      Port: 8083
+      TimeoutSecs: 60
+      ReadTimeoutSecs: 60
+      WriteTimeoutSecs: 12
+    DBConfig :
+      Host: localhost
+      Port: 5432
+      Username: postgres
+      Name: picus_basket
+      Password: postgres
+  order :
+    ServerConfig :
+      AppVersion: 1.0.0
+      Mode: Development
+      RoutePrefix: /api/v1/basket
+      Debug: false
+      Port: 8084
+      TimeoutSecs: 60
+      ReadTimeoutSecs: 60
+      WriteTimeoutSecs: 12
+    DBConfig :
+      Host: localhost
+      Port: 5432
+      Username: postgres
+      Name: picus_basket
+      Password: postgres
 
-JWTConfig:
+JWTConfig :
   SessionTime: 3600
   SecretKey: dummySecretKey
-
-DBConfig:
-  Host: localhost
-  Port: 5432
-  Username: postgres
-  Name: picus_basket
-  Password: postgres
