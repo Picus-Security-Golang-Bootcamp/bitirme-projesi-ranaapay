@@ -1,9 +1,13 @@
 package config
 
 type Config struct {
-	ServerConfig ServerConfig
-	JWTConfig    JWTConfig
-	DBConfig     DBConfig
+	DomainConfigs map[string]DomainConfig `mapstructure:"DomainConfig"`
+	JWTConfig     JWTConfig
+}
+
+type DomainConfig struct {
+	ServerConfig ServerConfig `mapstructure:"ServerConfig"`
+	DBConfig     DBConfig     `mapstructure:"DBConfig"`
 }
 
 type ServerConfig struct {
