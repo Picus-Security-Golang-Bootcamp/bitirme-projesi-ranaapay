@@ -9,14 +9,14 @@ import (
 	"gorm.io/gorm"
 )
 
-func NewPsqlDB(cfg *config.Config) (*gorm.DB, interface{}) {
+func NewPsqlDB(cfg *config.DBConfig) (*gorm.DB, interface{}) {
 
 	dataSourceName := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=disable password=%s",
-		cfg.DBConfig.Host,
-		cfg.DBConfig.Port,
-		cfg.DBConfig.Username,
-		cfg.DBConfig.Name,
-		cfg.DBConfig.Password,
+		cfg.Host,
+		cfg.Port,
+		cfg.Username,
+		cfg.Name,
+		cfg.Password,
 	)
 
 	db, err := gorm.Open(postgres.Open(dataSourceName), &gorm.Config{})

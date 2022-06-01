@@ -89,66 +89,15 @@ var rootCmd = &cobra.Command{
 	},
 }
 
-/*
-func Execute() {
-
-	cfg := LoadConfig()
-
-	db := NewSqlDb(cfg)
-
-	SetLog()
-
-	gin.SetMode(gin.ReleaseMode)
-	r := gin.New()
-
-	SwaggerSettings(cfg.ServerConfig)
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
-
-	srv := &http.Server{
-		Addr:         fmt.Sprintf("127.0.0.1:%s", cfg.ServerConfig.Port),
-		Handler:      r,
-		ReadTimeout:  time.Duration(cfg.ServerConfig.ReadTimeoutSecs * int64(time.Second)),
-		WriteTimeout: time.Duration(cfg.ServerConfig.WriteTimeoutSecs * int64(time.Second)),
-	}
-
-	rootRouter := r.Group(cfg.ServerConfig.RoutePrefix)
-	rootRouter.Use(middleware.Recovery())
-	rootRouter.Use(middleware.LoggingMiddleware())
-
-	authenticationRouter := rootRouter.Group("/authentication")
-	authRepo := repository.NewAuthRepository(db)
-	authService := service.NewAuthService(cfg.JWTConfig, authRepo)
-	handler.NewAuthHandler(authenticationRouter, authService)
-
-	categoryRouter := rootRouter.Group("/category")
-	categoryRepo := repository.NewCategoryRepository(db)
-	categoryService := service.NewCategoryService(&categoryRepo)
-	handler.NewCategoryHandler(categoryRouter, cfg.JWTConfig, categoryService)
-
-	productRouter := rootRouter.Group("/product")
-	productRepo := repository.NewProductRepository(db)
-	productService := service.NewProductService(productRepo, &categoryRepo)
-	handler.NewProductHandler(productRouter, cfg.JWTConfig, productService)
-
-	cartRouter := rootRouter.Group("/cart")
-	cartRepo := repository.NewCartRepository(db)
-	cartService := service.NewCartService(cartRepo, productRepo)
-	handler.NewCartHandler(cartRouter, cfg.JWTConfig, cartService)
-
-	orderRouter := rootRouter.Group("/order")
-	orderRepo := repository.NewOrderRepository(db)
-	orderService := service.NewOrderService(orderRepo, productRepo, cartRepo)
-	handler.NewOrderHandler(orderRouter, cfg.JWTConfig, orderService)
-
-	go func() {
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("listen: %s\n", err)
-		}
-	}()
-
-	graceful.ShutdownGin(srv, time.Duration(cfg.ServerConfig.TimeoutSecs*int64(time.Second)))
+func init() {
+	rootCmd.AddCommand(
+		authenticationCmd,
+		categoryCmd,
+		cartCmd,
+		orderCmd,
+		productCmd,
+	)
 }
-*/
 
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
@@ -167,7 +116,7 @@ func LoadConfig() *config.Config {
 }
 
 // NewSqlDb Initialize db
-func NewSqlDb(cfg *config.Config) *gorm.DB {
+func NewSqlDb(cfg *config.DBConfig) *gorm.DB {
 	db, err := db.NewPsqlDB(cfg)
 	if err != nil {
 		log.Fatalf("DatabaseConnect: %v", err)
