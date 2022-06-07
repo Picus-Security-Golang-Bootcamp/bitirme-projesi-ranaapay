@@ -1,6 +1,7 @@
 package service
 
 import (
+	"PicusFinalCase/src/client"
 	"PicusFinalCase/src/models"
 	"PicusFinalCase/src/pkg/errorHandler"
 	"PicusFinalCase/src/pkg/helper"
@@ -9,14 +10,14 @@ import (
 )
 
 type ProductService struct {
-	repo    *repository.ProductRepository
-	catRepo *repository.CategoryRepository
+	repo      *repository.ProductRepository
+	catClient *client.CategoryClient
 }
 
-func NewProductService(productRepo *repository.ProductRepository, catRepo *repository.CategoryRepository) *ProductService {
+func NewProductService(productRepo *repository.ProductRepository, client *client.CategoryClient) *ProductService {
 	return &ProductService{
-		repo:    productRepo,
-		catRepo: catRepo,
+		repo:      productRepo,
+		catClient: client,
 	}
 }
 
@@ -25,8 +26,8 @@ func NewProductService(productRepo *repository.ProductRepository, catRepo *repos
 func (s *ProductService) FindByProductId(id string) *models.Product {
 	res := s.repo.FindProductById(id)
 	if res == nil {
-		log.Error("The request id does not exist in the database.")
-		errorHandler.Panic(errorHandler.NotFoundError)
+		log.Error("The product request id does not exist in the database.")
+		errorHandler.Panic(errorHandler.ProductNotFoundError)
 	}
 	return res
 }
@@ -37,11 +38,7 @@ func (s *ProductService) CreateProduct(product models.Product) string {
 
 	//Find the category that its id matches the product CategoryId. If category return
 	//nil throws error.
-	category := s.catRepo.FindCategory(product.CategoryId)
-	if category == nil {
-		log.Error("The request categoryId does not exist in the database.")
-		errorHandler.Panic(errorHandler.CategoryIdNotValidError)
-	}
+	s.catClient.FindCategoryIsValid(product.CategoryId)
 
 	productId := s.repo.CreateProduct(product)
 	if productId == "" {
@@ -79,11 +76,7 @@ func (s *ProductService) UpdateProduct(product models.Product) models.Product {
 
 	//Find the category that its id matches the product CategoryId. If category return
 	//nil throws error.
-	category := s.catRepo.FindCategory(product.CategoryId)
-	if category == nil {
-		log.Error("The request categoryId does not exist in the database.")
-		errorHandler.Panic(errorHandler.CategoryIdNotValidError)
-	}
+	s.catClient.FindCategoryIsValid(product.CategoryId)
 
 	product.SetProductUpdatedAt()
 	updateOptions := helper.SetProductUpdateOptions(product)
