@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"PicusFinalCase/src/client"
 	"PicusFinalCase/src/handler"
 	"PicusFinalCase/src/pkg/graceful"
 	"PicusFinalCase/src/pkg/middleware"
@@ -47,8 +48,13 @@ var cartCmd = &cobra.Command{
 		rootRouter.Use(middleware.LoggingMiddleware())
 
 		cartRouter := rootRouter.Group("/cart")
+
 		cartRepo := repository.NewCartRepository(db)
-		cartService := service.NewCartService(cartRepo, productRepo)
+
+		productClient := client.NewProductClient(cfg.DomainConfigs["product"].ServerConfig, "/product")
+
+		cartService := service.NewCartService(cartRepo, productClient)
+
 		handler.NewCartHandler(cartRouter, cfg.JWTConfig, cartService)
 
 		go func() {

@@ -1,23 +1,23 @@
 package service
 
 import (
+	"PicusFinalCase/src/client"
 	"PicusFinalCase/src/models"
 	"PicusFinalCase/src/pkg/errorHandler"
-	"PicusFinalCase/src/pkg/helper"
 	"PicusFinalCase/src/repository"
 	"github.com/shopspring/decimal"
 	log "github.com/sirupsen/logrus"
 )
 
 type CartService struct {
-	cartRepo    *repository.CartRepository
-	productRepo *repository.ProductRepository
+	cartRepo      *repository.CartRepository
+	productClient *client.ProductClient
 }
 
-func NewCartService(cartRepo *repository.CartRepository, prodRepo *repository.ProductRepository) *CartService {
+func NewCartService(cartRepo *repository.CartRepository, productClient *client.ProductClient) *CartService {
 	return &CartService{
-		cartRepo:    cartRepo,
-		productRepo: prodRepo,
+		cartRepo:      cartRepo,
+		productClient: productClient,
 	}
 }
 
@@ -28,15 +28,19 @@ func (s *CartService) ListCartItems(userId string) *models.Cart {
 
 // AddToCart Adds cart detail to cart according to incoming userId, and cartDetail. Updates cart total
 //price and product units on cart fields. Returns created cart detail.
-func (s *CartService) AddToCart(userId string, cartDetail *models.CartDetails) *models.CartDetails {
+func (s *CartService) AddToCart(userId string, cartDetail *models.CartDetails, header string) *models.CartDetails {
 
-	//Find the product that its id matches the cartDetail productId.
-	product := s.productRepo.FindProductById(cartDetail.ProductId)
-	if product == nil {
-		log.Error("Product that its id matches to incoming cartDetail.ProductId does not contain in database.")
-		errorHandler.Panic(errorHandler.ProductIdNotValidError)
-	}
+	s.productClient.Token = header
 
+	product := s.productClient.FindProductById(cartDetail.ProductId)
+	/*
+		//Find the product that its id matches the cartDetail productId.
+		product := s.productRepo.FindProductById(cartDetail.ProductId)
+		if product == nil {
+			log.Error("Product that its id matches to incoming cartDetail.ProductId does not contain in database.")
+			errorHandler.Panic(errorHandler.ProductIdNotValidError)
+		}
+	*/
 	//Checking the request product quantity by product's quantity that found.
 	if (product.StockNumber - product.UnitsOnCart) < int(cartDetail.ProductQuantity) {
 		log.Error("Founded product stock numbers arent available for cartDetail product quantity.")
@@ -68,20 +72,21 @@ func (s *CartService) AddToCart(userId string, cartDetail *models.CartDetails) *
 
 	//Updating products unitsOnCart field.
 	product.SetProductUnitsOnCart(int(cartDetail.ProductQuantity))
-	product.SetUpdatedAt()
 
-	_, err := s.productRepo.UpdateProduct(*product, helper.SetProductUpdateOptions(*product))
-	if err != nil {
-		log.Error("Something happened when updating product.")
-		errorHandler.Panic(errorHandler.InternalServerError)
-	}
+	s.productClient.UpdateProduct(*product)
 
+	/*	_, err := s.productRepo.UpdateProduct(*product, helper.SetProductUpdateOptions(*product))
+		if err != nil {
+			log.Error("Something happened when updating product.")
+			errorHandler.Panic(errorHandler.InternalServerError)
+		}
+	*/
 	return cartDetail
 }
 
 // UpdateCartDetail Update cart detail to cart according to incoming userId, and cartDetail. Updates cart total
 //price and product units on cart fields. Returns updated cart detail.
-func (s *CartService) UpdateCartDetail(userId string, cartDetail *models.CartDetails) *models.CartDetails {
+func (s *CartService) UpdateCartDetail(userId string, cartDetail *models.CartDetails, header string) *models.CartDetails {
 
 	//Find user's cart by userId.
 	cart := s.findUserCart(userId)
@@ -94,13 +99,18 @@ func (s *CartService) UpdateCartDetail(userId string, cartDetail *models.CartDet
 		errorHandler.Panic(errorHandler.ProductNotExistInCartError)
 	}
 
-	//Find the product that its id matches the cartDetail productId.
-	product := s.productRepo.FindProductById(cartDetail.ProductId)
-	if product == nil {
-		log.Error("Product that its id matches to incoming cartDetail.ProductId does not contain in database.")
-		errorHandler.Panic(errorHandler.ProductDeletedError)
-	}
+	s.productClient.Token = header
 
+	product := s.productClient.FindProductById(cartDetail.ProductId)
+
+	/*
+		//Find the product that its id matches the cartDetail productId.
+		product := s.productRepo.FindProductById(cartDetail.ProductId)
+		if product == nil {
+			log.Error("Product that its id matches to incoming cartDetail.ProductId does not contain in database.")
+			errorHandler.Panic(errorHandler.ProductDeletedError)
+		}
+	*/
 	//Checking the request product quantity by product's quantity that found.
 	validNum := product.StockNumber - product.UnitsOnCart + int(existDetailCart.ProductQuantity)
 	if validNum < int(cartDetail.ProductQuantity) {
@@ -130,14 +140,16 @@ func (s *CartService) UpdateCartDetail(userId string, cartDetail *models.CartDet
 	//Calculating and Updating products unitsOnCart field.
 	productUnitsOnCart := product.UnitsOnCart - int(existDetailCart.ProductQuantity) + int(cartDetail.ProductQuantity)
 	product.SetProductUnitsOnCart(productUnitsOnCart)
-	product.SetUpdatedAt()
 
-	_, err := s.productRepo.UpdateProduct(*product, helper.SetProductUpdateOptions(*product))
-	if err != nil {
-		log.Error("Something happened when updating product.")
-		errorHandler.Panic(errorHandler.InternalServerError)
-	}
+	s.productClient.UpdateProduct(*product)
 
+	/*
+		_, err := s.productRepo.UpdateProduct(*product, helper.SetProductUpdateOptions(*product))
+		if err != nil {
+			log.Error("Something happened when updating product.")
+			errorHandler.Panic(errorHandler.InternalServerError)
+		}
+	*/
 	return cartDetail
 }
 
