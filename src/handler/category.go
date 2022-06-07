@@ -21,6 +21,7 @@ func NewCategoryHandler(r *gin.RouterGroup, config config.JWTConfig, categorySer
 
 	r.POST("", middleware.AuthMiddleware(config.SecretKey, models.Admin), h.createCategories)
 	r.GET("", h.findCategories)
+	r.GET("/:id", h.findCategoryById)
 }
 
 // createCategories
@@ -64,4 +65,13 @@ func (h *CategoryHandler) findCategories(c *gin.Context) {
 
 	categoryRes := responseType.NewCategoriesResponseType(*categories)
 	c.JSON(http.StatusOK, responseType.NewResponseType(http.StatusOK, categoryRes))
+}
+
+func (h *CategoryHandler) findCategoryById(c *gin.Context) {
+	pId := c.Param("id")
+
+	res := h.service.FindCategory(pId)
+
+	catRes := responseType.NewCategoryResponseType(*res)
+	c.JSON(http.StatusOK, responseType.NewResponseType(http.StatusOK, catRes))
 }
