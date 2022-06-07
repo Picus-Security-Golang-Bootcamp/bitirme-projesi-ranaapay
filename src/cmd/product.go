@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"PicusFinalCase/src/client"
 	"PicusFinalCase/src/handler"
 	"PicusFinalCase/src/pkg/graceful"
 	"PicusFinalCase/src/pkg/middleware"
@@ -48,7 +49,10 @@ var productCmd = &cobra.Command{
 
 		productRouter := rootRouter.Group("/product")
 		productRepo := repository.NewProductRepository(db)
-		productService := service.NewProductService(productRepo, &categoryRepo)
+
+		catClient := client.NewCategoryClient(cfg.DomainConfigs["category"].ServerConfig, "/category")
+
+		productService := service.NewProductService(productRepo, catClient)
 		handler.NewProductHandler(productRouter, cfg.JWTConfig, productService)
 
 		go func() {
