@@ -19,7 +19,7 @@ DomainConfig :
     ServerConfig :
       AppVersion: 1.0.0
       Mode: Development
-      RoutePrefix: /api/v1/
+      RoutePrefix: /api/v1
       Debug: false
       Port: 8081
       TimeoutSecs: 60
@@ -35,7 +35,7 @@ DomainConfig :
     ServerConfig :
       AppVersion: 1.0.0
       Mode: Development
-      RoutePrefix: /api/v1/basket
+      RoutePrefix: /api/v1
       Debug: false
       Port: 8082
       TimeoutSecs: 60
@@ -51,7 +51,7 @@ DomainConfig :
     ServerConfig :
       AppVersion: 1.0.0
       Mode: Development
-      RoutePrefix: /api/v1/basket
+      RoutePrefix: /api/v1
       Debug: false
       Port: 8083
       TimeoutSecs: 60
@@ -67,7 +67,7 @@ DomainConfig :
     ServerConfig :
       AppVersion: 1.0.0
       Mode: Development
-      RoutePrefix: /api/v1/basket
+      RoutePrefix: /api/v1
       Debug: false
       Port: 8084
       TimeoutSecs: 60
