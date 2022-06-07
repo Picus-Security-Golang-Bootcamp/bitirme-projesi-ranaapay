@@ -47,7 +47,7 @@ func (s *CategoryService) FindCategory(id string) *models.Category {
 
 	category := s.repo.FindCategory(id)
 	if category == nil {
-		log.Error("The request id does not exist in the database.")
+		log.Error("The category request id does not exist in the database.")
 		errorHandler.Panic(errorHandler.CategoryIdNotValidError)
 	}
 
