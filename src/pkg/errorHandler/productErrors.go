@@ -30,4 +30,8 @@ var (
 		Code:    http.StatusBadRequest,
 		Message: "UnitsOnCart is required, it can not be lower than 0.",
 	}
+	ProductNotFoundError = _type.ErrorType{
+		Code:    http.StatusNotFound,
+		Message: "Product not found in database.",
+	}
 )

@@ -18,6 +18,7 @@ type ProductResponseType struct {
 	Price       string `json:"price"`
 	StockNumber int    `json:"stockNumber"`
 	UnitsOnCart int    `json:"unitsOnCart"`
+	CategoryId  string `json:"categoryId"`
 }
 
 func NewProductWithCategoryResponseType(product models.Product) ProductWithCategoryResponseType {
@@ -38,6 +39,7 @@ func NewProductResponseType(product models.Product) ProductResponseType {
 		Price:       product.Price.String(),
 		UnitsOnCart: product.UnitsOnCart,
 		StockNumber: product.StockNumber,
+		CategoryId:  product.CategoryId,
 	}
 }
 

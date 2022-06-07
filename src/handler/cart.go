@@ -56,7 +56,7 @@ func (h *CartHandler) AddToCart(c *gin.Context) {
 	reqDetail.ValidateCartDetailsRequest()
 
 	cartDetail := reqDetail.RequestToDetailType()
-	res := h.cartService.AddToCart(userId.(string), cartDetail)
+	res := h.cartService.AddToCart(userId.(string), cartDetail, c.GetHeader("Authorization"))
 
 	detailRes := responseType.NewCartDetailResponseType(*res)
 	c.JSON(http.StatusCreated, responseType.NewResponseType(http.StatusCreated, detailRes))
@@ -108,7 +108,7 @@ func (h CartHandler) UpdateCartItems(c *gin.Context) {
 	reqDetail.ValidateCartDetailsRequest()
 
 	cartDetail := reqDetail.RequestToDetailType()
-	res := h.cartService.UpdateCartDetail(userId.(string), cartDetail)
+	res := h.cartService.UpdateCartDetail(userId.(string), cartDetail, c.GetHeader("Authorization"))
 
 	detailRes := responseType.NewCartDetailResponseType(*res)
 	c.JSON(http.StatusOK, responseType.NewResponseType(http.StatusOK, detailRes))

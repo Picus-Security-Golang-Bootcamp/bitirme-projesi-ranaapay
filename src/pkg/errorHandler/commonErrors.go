@@ -18,6 +18,10 @@ var (
 		Code:    http.StatusInternalServerError,
 		Message: "Unmarshal Error : Unable to decode into struct",
 	}
+	MarshalError = _type.ErrorType{
+		Code:    http.StatusInternalServerError,
+		Message: "Marshal Error",
+	}
 	GormOpenError = _type.ErrorType{
 		Code:    http.StatusInternalServerError,
 		Message: "Failed to open db session matching the entered values",
@@ -77,5 +81,9 @@ var (
 	InternalServerError = _type.ErrorType{
 		Code:    http.StatusInternalServerError,
 		Message: "Internal server error.",
+	}
+	ClientError = _type.ErrorType{
+		Code:    http.StatusInternalServerError,
+		Message: "HttpClient error.",
 	}
 )
